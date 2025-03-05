@@ -8,8 +8,13 @@ import { Demo } from "./pages/demo";
 import { Single } from "./pages/single";
 import injectContext from "./store/appContext";
 
-import { Navbar } from "./component/navbar";
-import { Footer } from "./component/footer";
+import Navbar from "./component/navbar";
+
+import ListaHoteles from "./component/listaHoteles";
+import EditarHotel from "./component/editarHotel";
+import CrearHotel from "./component/crearHotel";
+
+
 
 //create your first component
 const Layout = () => {
@@ -25,12 +30,13 @@ const Layout = () => {
                 <ScrollToTop>
                     <Navbar />
                     <Routes>
-                        <Route element={<Home />} path="/" />
-                        <Route element={<Demo />} path="/demo" />
+                        <Route element={<ListaHoteles/>} path="/" />
+                        <Route element={<EditarHotel />} path="/editar/:id"/> 
+                        <Route element={<CrearHotel/>} path="/crear"/>
                         <Route element={<Single />} path="/single/:theid" />
                         <Route element={<h1>Not found!</h1>} />
                     </Routes>
-                    <Footer />
+            
                 </ScrollToTop>
             </BrowserRouter>
         </div>
