@@ -1,41 +1,43 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
 const ListaHoteles = () => {
     const [hoteles, setHoteles] = useState([]);
-
+    const [cargando, setCargando] = useState(true);
+    
     useEffect(() => {
-        obtenerHoteles()
-    }, []);
-
+        setCargando(true);
+       
     //obtener Hoteles
-    function obtenerHoteles(){
-        const requestOptions = {
-            method: "GET",
-            headers: { "Content-Type": "application/json"},
-        };
-  
-        fetch("https://laughing-enigma-7qx7qv57p4gcw57r-3001.app.github.dev/api/hoteles", requestOptions)
+    
+        fetch("https://laughing-enigma-7qx7qv57p4gcw57r-3001.app.github.dev/api/hoteles",)
             .then((response) => response.json())
-            .then((data) => setHoteles(data))           
-    };
+            .then((data) => {
+                    setHoteles(data); 
+                    setCargando(false);
+    })
+ }, []);
 
+    
      // Eliminar Hotel
-    const eliminarHotel = (id) => {
+     const eliminarHotel = (id) => {
         const requestOptions = {
             method: "DELETE",
             headers: { "Content-Type": "application/json" },
-          };
-        
-          fetch(`https://laughing-enigma-7qx7qv57p4gcw57r-3001.app.github.dev/api/hoteles/${id}`, requestOptions)
+        };
+    
+        fetch(`https://laughing-enigma-7qx7qv57p4gcw57r-3001.app.github.dev/api/hoteles/${id}`, requestOptions)
             .then((response) => {
                 if (response.ok) {
-                    //si la eliminacion fue exitosa, actualiza a la lista de hoteles
-                    setHoteles(hoteles.filter(hotel => hotel.id !== id));
+                    // Si la eliminación fue exitosa, actualiza la lista de hoteles
+                    if (!cargando) {
+                        setHoteles(hoteles.filter(hotel => hotel.id !== id));
+                    }
                 } else {
-                    alert("hubo un problema al eliminar el hotel");
+                    alert("Hubo un problema al eliminar el hotel");
                 } 
-            }) 
+            })
+            .catch(error => console.error("Error al eliminar el hotel:", error));
     };
   
 

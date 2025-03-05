@@ -8,15 +8,17 @@ const CrearHotel = () => {
 
 
     const handleSubmit = (e) => {
-    e.preventDefault();
-
-        const nuevoHotel = { nombre, email };
+        e.preventDefault();
+        if(!nombre || !email){
+            alert("Todos los campos son obligatorios.");
+            return;
+        }
 
     //Crear y enviar solicitud POST para agregar el nuevo hotel
         fetch("https://laughing-enigma-7qx7qv57p4gcw57r-3001.app.github.dev/api/hoteles", {
                 method: "POST",
                 headers: {"Content-type": "application/json"},
-                body: JSON.stringify(nuevoHotel),
+                body: JSON.stringify({nombre, email}),
             })
             .then ((response) => {
                 if (!response.ok) {

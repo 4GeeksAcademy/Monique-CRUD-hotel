@@ -22,58 +22,7 @@ def handle_hello():
 
     return jsonify(response_body), 200
 
-@api.route('/estudiantes', methods=['GET'])
-def obtener_estudiantes():
-    estudiantes = Estudiantes.query.all()  # Obtener todos los estudiantes
-    estudiantes_serialize = [estudiante.serialize() for estudiante in estudiantes]  # Serializar cada estudiante
-    return jsonify(estudiantes_serialize), 200  # Retornar los datos serializados como JSON
-
-        
-@api.route('/estudiantes', methods=['POST'])
-def crear_estudiante():
-        data = request.get_json()
-        #crear estudiantes
-        existing_estudiante = Estudiantes.query.filter_by(nombre=data["nombre"]).first()
-        if existing_estudiante:
-            return jsonify({"error": "Estudiante con este nombre ya existe"}), 400
-        
-        nuevo_estudiante =Estudiantes(
-            nombre=data["nombre"],
-            nacionalidad=data["nacionalidad"],
-        )
-        db.session.add(nuevo_estudiante)
-        db.session.commit()
-    
-        return jsonify(nuevo_estudiante.serialize()), 200
-
-@api.route("/estudiantes/<int:id>", methods=["DELETE"])
-def delete_estudiante(id):
-    estudiante = Estudiantes.query.get(id)
-    
-    if not estudiante:
-        return jsonify({"error": "Estudiante no encontrado"}), 400
-
-    db.session.delete(estudiante)
-    db.session.commit()
-
-    return jsonify({"message" : "Estudiante eliminado"}), 200
-
-@api.route("/estudiantes/<int:id>", methods=["PUT"])
-def actualizar_estudiante(id):
-    estudiante = Estudiantes.query.get(id)
-    
-    if not estudiante:
-        return jsonify({"error": "Estudiante no encontrado"}), 400
-
-    data = request.get_json()
-
-    estudiante.nombre = data.get("nombre", estudiante.nombre)
-    estudiante.nacionalidad = data.get("nacionalidad", estudiante.nacionalidad)
-
-    db.session.commit()
-
-    return jsonify(estudiante.serialize()), 200
-    
+ 
 
 @api.route('/hoteles', methods=['GET'])
 def obtener_hoteles():
