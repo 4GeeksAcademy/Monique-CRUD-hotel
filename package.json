@@ -8,9 +8,9 @@
 	"main": "index.js",
 	"scripts": {
 		"start": "webpack-dev-server --config webpack.dev.js --port 3000",
-		"build": "webpack --config webpack.prod.js"		
+		"build": "webpack --config webpack.prod.js"
 	},
-		"author": {
+	"author": {
 		"name": "Alejandro Sanchez",
 		"url": "http://alesanchezr.com/"
 	},
@@ -74,12 +74,11 @@
 	},
 	"dependencies": {
 		"bootstrap": "^5.3.3",
+		"cors": "^2.8.5",
 		"prop-types": "^15.6.1",
 		"react": "^16.8.4",
 		"react-dom": "^16.8.4",
 		"react-polyfills": "0.0.1",
 		"react-router-dom": "^6.30.0"
 	}
-	
 }
-

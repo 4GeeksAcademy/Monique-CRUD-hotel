@@ -7,7 +7,8 @@ const Hoteles = () => {
   const [nombre, setNombre] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [mostrarFormulario, setMostrarFormulario] = useState(false); // Nuevo estado para mostrar/ocultar formulario
+  const [mostrarFormulario, setMostrarFormulario] = useState(false);
+  const [error, setError] = useState(null);
   const navigate = useNavigate();
 
   // Obtener lista de hoteles al cargar el componente
@@ -16,7 +17,7 @@ const Hoteles = () => {
       .then((response) => response.json())
       .then((data) => setHoteles(data))
       .catch((error) => console.error("Error al obtener hoteles:", error));
-  }, [hoteles]); // Agrega `hoteles` como dependencia para actualizar la lista automáticamente
+  }, []); // solo se ejecuta una vez al montar el componente
 
   // Manejar el envío del formulario (crear o editar)
   const handleSubmit = (e) => {
@@ -38,7 +39,6 @@ const Hoteles = () => {
           return response.json();
         })
         .then((updatedHotel) => {
-          // Actualizar la lista de hoteles en el estado
           setHoteles((prevHoteles) =>
             prevHoteles.map((hotel) =>
               hotel.id === updatedHotel.id ? updatedHotel : hotel
@@ -56,7 +56,7 @@ const Hoteles = () => {
       fetch(process.env.BACKEND_URL + "/api/hoteles", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...hotelData, password }), // Incluimos la contraseña solo al crear
+        body: JSON.stringify({ ...hotelData, password }),
       })
         .then((response) => {
           if (!response.ok) {

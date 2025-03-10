@@ -2,7 +2,7 @@
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints
 """
 from flask import Flask, request, jsonify, url_for, Blueprint
-from api.models import db, User, Estudiantes, Hoteles
+from api.models import db, User, Hoteles, Branches, Maintenance, Administrador
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 
@@ -99,3 +99,131 @@ def actualizar_hoteles(id):
 
     return jsonify(hotel.serialize()), 200
 
+# Obtener todos los branches
+@api.route('/branches', methods=['GET'])
+def obtener_branches():
+    branches = Branches.query.all()  # Obtener todos los branches
+    branches_serialize = [branch.serialize() for branch in branches]  # Serializar cada branch
+    
+    return jsonify(branches_serialize), 200  # Retornar los datos serializados como JSON
+
+# Obtener un branch por ID
+@api.route('/branches/<int:id>', methods=['GET'])
+def get_branch(id):
+    branch = Branches.query.get_or_404(id)
+   
+    return jsonify(branch.serialize()), 200  # Aquí se añade la respuesta JSON
+
+# Crear un nuevo branch
+@api.route('/branches', methods=['POST'])
+def crear_branch():
+    data = request.get_json()
+    nuevo_branch = Branches(
+        nombre=data["nombre"],
+        direccion=data["direccion"],
+        longitud=data["longitud"],
+        latitud=data["latitud"],
+        hotel_id=data["hotel_id"]
+    )
+   
+    db.session.add(nuevo_branch)
+    db.session.commit()
+    
+    return jsonify(nuevo_branch.serialize()), 201
+
+# Actualizar un branch existente
+@api.route('/branches/<int:id>', methods=['PUT'])
+def actualizar_branch(id):
+    branch = Branches.query.get_or_404(id)
+    data = request.get_json()
+    branch.nombre = data.get("nombre", branch.nombre)
+    branch.direccion = data.get("direccion", branch.direccion)
+    branch.longitud = data.get("longitud", branch.longitud)
+    branch.latitud = data.get("latitud", branch.latitud)
+    branch.hotel_id = data.get("hotel_id", branch.hotel_id)
+    
+    db.session.commit()
+    
+    return jsonify(branch.serialize()), 200
+
+# Eliminar un branch
+@api.route('/branches/<int:id>', methods=['DELETE'])
+def delete_branch(id):
+    branch = Branches.query.get_or_404(id)
+   
+    db.session.delete(branch)
+    db.session.commit()
+    
+    return jsonify({"message": "Branch eliminado"}), 200
+
+# Rutas para Maintenance
+
+# Ruta para obtener todos los trabajadores de mantenimiento
+@api.route('/maintenance', methods=['GET'])
+def get_maintenance():
+    maintenance = Maintenance.query.all()
+    
+    return jsonify([maint.serialize() for maint in maintenance])
+
+# Ruta para obtener un trabajador de mantenimiento por ID
+@api.route('/maintenance/<int:id>', methods=['GET'])
+def get_maint(id):
+    maint = Maintenance.query.get_or_404(id)
+    
+    return jsonify(maint.serialize())
+
+# Ruta para crear un nuevo trabajador de mantenimiento
+@api.route('/maintenance', methods=['POST'])
+def create_maintenance():
+    data = request.get_json()
+    nuevo_maint = Maintenance(
+        nombre=data['nombre'],
+        email=data['email'],
+        password=data['password'],
+        hotel_id=data['hotel_id']
+    )
+    
+    db.session.add(nuevo_maint)
+    db.session.commit()
+    
+    return jsonify(nuevo_maint.serialize()), 201
+
+# Ruta para actualizar un trabajador de mantenimiento
+@api.route('/maintenance/<int:id>', methods=['PUT'])
+def update_maintenance(id):
+    maint = Maintenance.query.get_or_404(id)
+    data = request.get_json()
+    maint.nombre = data['nombre']
+    maint.email = data['email']
+    maint.password = data['password']
+    maint.hotel_id = data['hotel_id']
+   
+    db.session.commit()
+   
+    return jsonify(maint.serialize())
+
+# Ruta para eliminar un trabajador de mantenimiento
+@api.route('/maintenance/<int:id>', methods=['DELETE'])
+def delete_maintenance(id):
+    maint = Maintenance.query.get_or_404(id)
+    
+    db.session.delete(maint)
+    db.session.commit()
+    
+    return jsonify({"message": "Trabajador de mantenimiento eliminado con éxito"}), 200
+ 
+ #login
+@api.route("/login", methods=["POST"])
+def login():
+    email = request.json.get("email", None)
+    password = request.json.get("password", None)
+    
+    user = Administrador.query.filter_by(email=email).first()
+    print(user)
+
+    if user == None:
+        return jsonify({"msg":"Cold not find email"}), 401
+    if password != user.password:
+        return jsonify({"msg": "Bad email or password"}), 401
+
+   
