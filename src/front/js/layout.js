@@ -10,7 +10,10 @@ import injectContext from "./store/appContext";
 import Hoteles from "./component/listaHoteles";
 import Branches from "./component/listaBranches";
 import Maintenance from "./component/listaMaintenance";
-import LoginAdministrador from "./pages/loginadministrador";
+import SignupHotel from "./pages/signuphotel";
+import PrivateHotel from "./pages/privatehotel";   
+import LoginHotel from "./pages/loginhotel";
+import AuthHotel from "./component/authhotel";
 
 
 const Layout = () => {
@@ -24,17 +27,19 @@ const Layout = () => {
                 <ScrollToTop>
                     <Navbar />
                     <Routes>
-                        <Route element={<Home />} path="/"/>
-                        <Route element={<Hoteles />} path="/hoteles"  />
-                        <Route element={<Hoteles />} path="/listaHoteles"  />
-                        <Route element={<Branches />} path="/listaBranches"  />
-                        <Route element={<Branches />} path="/listaBranches"  />
-                        <Route element={<Maintenance/>} path="/listaMaintenance" />
-                        <Route element={<Maintenance/>} path="/listaMaintenance"  />
-                        <Route element={<Single />} path="/single/:theid"   />
-                        <Route element={<LoginAdministrador />} path="/loginadministrador" />
+                        <Route element={<Home />} path="/" />
+                        <Route element={<Hoteles />} path="/hoteles" />
+                        <Route element={<Hoteles />} path="/listaHoteles" />
+                        <Route element={<Branches />} path="/listaBranches" />
+                        <Route element={<Maintenance />} path="/listaMaintenance" />
+                        <Route element={<Single />} path="/single/:theid" />
+                        <Route element={<PrivateHotel />} path="/privatehotel" />
+                        <Route element={<SignupHotel />} path="/signuphotel" />
+                        <Route element={<LoginHotel />} path="/loginhotel" />
+                        <Route element={<AuthHotel />} path="authhotel"  />
                         <Route element={<h1>Not found!</h1>} />
                     </Routes>
+
                 </ScrollToTop>
             </BrowserRouter>
         </div>

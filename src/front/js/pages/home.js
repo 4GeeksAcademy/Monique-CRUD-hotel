@@ -24,6 +24,9 @@ export const Home = () => {
             <div><Link to="/listaHoteles">Go to Hoteles</Link></div>
             <div><Link to="/listaBranches"> Go to Branches</Link></div>
             <div><Link to="/ListaMaintenance"> Go to Maintenance</Link></div>
+            <div>
+				<Link to="/authhotel">Go to login Hotel Form</Link>
+			</div>
 
 
         </div>

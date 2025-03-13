@@ -5,6 +5,19 @@ from flask import Flask, request, jsonify, url_for, Blueprint
 from api.models import db, User, Hoteles, Branches, Maintenance, Administrador
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
+from werkzeug.security import check_password_hash, generate_password_hash
+from flask_jwt_extended import jwt_required, get_jwt_identity
+from flask_jwt_extended import create_access_token
+from flask_jwt_extended import get_jwt_identity
+from flask_jwt_extended import jwt_required
+from flask_jwt_extended import JWTManager
+
+
+app = Flask(__name__)
+app.config['JWT_SECRET_KEY'] = 'tu_clave_secreta'  # Cambia esto por una clave secreta segura
+jwt = JWTManager(app)
+
+
 
 
 api = Blueprint('api', __name__)
@@ -212,18 +225,51 @@ def delete_maintenance(id):
     
     return jsonify({"message": "Trabajador de mantenimiento eliminado con éxito"}), 200
  
- #login
-@api.route("/login", methods=["POST"])
-def login():
+@api.route("/loginhotel", methods=["POST"])
+def loginhotel():
     email = request.json.get("email", None)
     password = request.json.get("password", None)
     
-    user = Administrador.query.filter_by(email=email).first()
-    print(user)
+    hotel = Hoteles.query.filter_by(email=email).first()
+    
+     # Si no se encuentra el hotel
+    if hotel is None:
+        return jsonify({"msg": "Correo no encontrado"}), 401
 
-    if user == None:
-        return jsonify({"msg":"Cold not find email"}), 401
-    if password != user.password:
-        return jsonify({"msg": "Bad email or password"}), 401
+    # Verificar la contraseña (deberías usar hashing para contraseñas en producción)
+    if password != hotel.password:
+        return jsonify({"msg": "Correo o contraseña incorrectos"}), 401
+    
+    access_token = create_access_token(identity=email)
+    return jsonify(access_token=access_token), 200
+
+
+@api.route("/signuphotel", methods=["POST"])
+def signuphotel():
+     # Obtener los datos de la solicitud de registro
+    body = request.get_json()
+
+    # Verificar si el correo ya está registrado
+    hotel = Hoteles.query.filter_by(email=body["email"]).first()
+    
+    if hotel:
+        return jsonify({"msg": "Ya se encuentra un hotel con ese correo"}), 401
+
+    # Crear un nuevo hotel
+    hotel = Hoteles(email=body["email"], password=body["password"], nombre=body["nombre"])
+    db.session.add(hotel)
+    db.session.commit()
+
+    # Responder con mensaje de éxito
+    response_body = {
+        "msg": "Hotel creado exitosamente"
+    }
+    return jsonify(response_body), 200
+         
+@api.route("/privatehotel", methods=["GET"])
+@jwt_required()
+def privatehotel():
+    current_user = get_jwt_identity() #obtiene la identidad del usuario desde el token
+    return jsonify(logget_in_as=current_user), 200
 
    
