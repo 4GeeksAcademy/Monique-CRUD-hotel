@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Autocomplete from "./autoComplete";
+import AutocompleteWithMap from "./autoComplete";
+
 
 const Branches = () => {
   const [branches, setBranches] = useState([]);
@@ -166,7 +168,7 @@ const Branches = () => {
               required
             />
 
-            <Autocomplete
+            <AutocompleteWithMap
               value={direccion}
               onChange={setDireccion}
               onSelect={setDireccion}
