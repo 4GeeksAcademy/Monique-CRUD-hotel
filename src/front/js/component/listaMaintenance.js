@@ -7,39 +7,34 @@ const Maintenance = () => {
   const [nombre, setNombre] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [hotelId, setHotelId] = useState(""); // Asegurar que tenga un valor por defecto
-  const [hoteles, setHoteles] = useState([]);
   const [mostrarFormulario, setMostrarFormulario] = useState(false);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
-  // Obtener lista de Maintenance y Hoteles al cargar el componente
+  // Obtener lista de Maintenance al cargar el componente
   useEffect(() => {
-    // Obtener los mantenimientos
+    let isMounted = true; // Flag para verificar si el componente sigue montado
+
     fetch(process.env.BACKEND_URL + "/api/maintenance")
       .then((response) => response.json())
-      .then((data) => setMaintenance(data))
+      .then((data) => {
+        if (isMounted) {
+          setMaintenance(data); // Solo actualizamos el estado si el componente sigue montado
+        }
+      })
       .catch((error) => console.error("Error al obtener Maintenance:", error));
 
-    // Obtener los hoteles
-    fetch(process.env.BACKEND_URL + "/api/hoteles")
-    .then((response) => response.json())
-    .then((data) => {
-      setHoteles(data);
-      console.log("Hoteles cargados:", data); // Verifica si los datos son correctos
-    })
-    .catch((error) => console.error("Error al obtener Hoteles:", error));
+    // Cleanup function para evitar la actualización del estado si el componente se desmonta
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   // Manejar el envío del formulario (crear o editar)
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!hotelId) {
-      alert("Debes seleccionar un hotel.");
-      return;
-    }
 
-    const maintenanceData = { nombre, email, password, hotel_id: parseInt(hotelId) };
+    const maintenanceData = { nombre, email, password };
 
     const url = process.env.BACKEND_URL + (maintenanceSeleccionado ? `/api/maintenance/${maintenanceSeleccionado.id}` : "/api/maintenance");
     const method = maintenanceSeleccionado ? "PUT" : "POST";
@@ -55,10 +50,8 @@ const Maintenance = () => {
       })
       .then((maintenance) => {
         if (maintenanceSeleccionado) {
-          // Si es edición, actualiza la lista de mantenimientos
-          setMaintenance(maintenance.map((m) => (m.id === maintenance.id ? maintenance : m)));
+          setMaintenance((prevMaintenance) => prevMaintenance.map((m) => (m.id === maintenance.id ? maintenance : m)));
         } else {
-          // Si es creación, añade el nuevo mantenimiento a la lista
           setMaintenance((prevMaintenance) => [...prevMaintenance, maintenance]);
         }
 
@@ -66,7 +59,6 @@ const Maintenance = () => {
         setNombre("");
         setEmail("");
         setPassword("");
-        setHotelId("");
         setMostrarFormulario(false);
         navigate("/listaMaintenance");
       })
@@ -77,17 +69,26 @@ const Maintenance = () => {
 
   // Eliminar un mantenimiento
   const eliminarMaintenance = (id) => {
+    let isMounted = true; // Verificamos si el componente sigue montado
+
     fetch(process.env.BACKEND_URL + `/api/maintenance/${id}`, {
       method: "DELETE",
       headers: { "Content-Type": "application/json" },
     })
       .then((response) => {
         if (!response.ok) throw new Error("Hubo un problema al eliminar el mantenimiento");
-        setMaintenance((prevMaintenance) => prevMaintenance.filter((mantenimiento) => mantenimiento.id !== id));
+        if (isMounted) {
+          setMaintenance((prevMaintenance) => prevMaintenance.filter((mantenimiento) => mantenimiento.id !== id));
+        }
       })
       .catch((error) => {
         alert("Error al eliminar: " + error.message);
       });
+
+    // Cleanup function para evitar actualizaciones del estado si el componente se desmonta
+    return () => {
+      isMounted = false;
+    };
   };
 
   return (
@@ -102,7 +103,6 @@ const Maintenance = () => {
             setNombre("");
             setEmail("");
             setPassword("");
-            setHotelId("");
             setMostrarFormulario(true);
           }}
         >
@@ -113,7 +113,6 @@ const Maintenance = () => {
       <div className="row bg-light p-2 fw-bold border-bottom">
         <div className="col">Nombre</div>
         <div className="col">Email</div>
-        <div className="col">Hotel</div>
         <div className="col text-center">Acciones</div>
       </div>
 
@@ -121,9 +120,6 @@ const Maintenance = () => {
         <div key={mantenimiento.id} className="row p-2 border-bottom align-items-center">
           <div className="col">{mantenimiento.nombre}</div>
           <div className="col">{mantenimiento.email}</div>
-          <div className="col">
-            {hoteles.find((hotel) => hotel.id === mantenimiento.hotel_id)?.nombre || "No asignado"}
-          </div>
           <div className="col d-flex justify-content-center">
             <button
               className="btn btn-warning me-2"
@@ -132,7 +128,6 @@ const Maintenance = () => {
                 setNombre(mantenimiento.nombre);
                 setEmail(mantenimiento.email);
                 setPassword(mantenimiento.password);
-                setHotelId(mantenimiento.hotel_id);
                 setMostrarFormulario(true);
               }}
             >
@@ -152,21 +147,19 @@ const Maintenance = () => {
             <input type="text" value={nombre} onChange={(e) => setNombre(e.target.value)} className="form-control mb-3" placeholder="Nombre" required />
             <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="form-control mb-3" placeholder="Email" required />
             <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="form-control mb-3" placeholder="Contraseña" required />
-            <select value={hotelId} onChange={(e) => setHotelId(e.target.value)} className="form-control mb-3" required>
-              <option value="">Seleccionar Hotel</option>
-              {hoteles.map((hotel) => (
-                <option key={hotel.id} value={hotel.id}>
-                  {hotel.nombre}
-                </option>
-              ))}
-            </select>
             <button type="submit" className="btn btn-primary w-100">{maintenanceSeleccionado ? "Guardar Cambios" : "Crear Tecnico"}</button>
           </form>
         </div>
       )}
+
+      {/* Botón para volver a la página anterior */}
+      <div className="d-flex justify-content-center align-items-center mt-4">
+        <button className="btn btn-secondary" onClick={() => navigate("/privateHotel")}>
+          Volver
+        </button>
+      </div>
     </div>
   );
 };
 
 export default Maintenance;
-

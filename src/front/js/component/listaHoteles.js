@@ -56,7 +56,7 @@ const Hoteles = () => {
       fetch(process.env.BACKEND_URL + "/api/hoteles", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...hotelData, password }),
+        body: JSON.stringify({ ...hotelData, password } ),
       })
         .then((response) => {
           if (!response.ok) {
@@ -154,13 +154,32 @@ const Hoteles = () => {
           </h3>
           <form onSubmit={handleSubmit}>
             <div className="mb-3">
-              <input type="text" value={nombre} onChange={(e) => setNombre(e.target.value)} className="form-control" placeholder="Nombre" required />
+              <input
+                type="text"
+                value={nombre}
+                onChange={(e) => setNombre(e.target.value)}
+                className="form-control"
+                placeholder="Nombre"
+                required
+              />
             </div>
             <div className="mb-3">
-              <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="form-control" placeholder="Email" required />
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="form-control"
+                placeholder="Email"
+                required
+              />
             </div>
             <div className="mb-3">
-              <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="form-control" placeholder="Contraseña"
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="form-control"
+                placeholder="Contraseña"
                 required={!hotelSeleccionado} // Solo es obligatorio si estamos creando un hotel
               />
             </div>
@@ -172,6 +191,13 @@ const Hoteles = () => {
           </form>
         </div>
       )}
+
+      {/* Botón para volver */}
+      <div className="d-flex justify-content-center mt-4">
+        <button className="btn btn-secondary" onClick={() => navigate("/privateHotel")}>
+          Volver
+        </button>
+      </div>
     </div>
   );
 };

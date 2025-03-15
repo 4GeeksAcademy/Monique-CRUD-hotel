@@ -27,8 +27,11 @@ const AutocompleteWithMap = ({ value, onChange, onSelect, onLatLngChange }) => {
     });
   };
 
+   const key=process.env.MAP_KEY
+
+
   return (
-    <LoadScript googleMapsApiKey="AIzaSyC8SG3Um8XsfFXmzbCEql6ajptCOqpQUNw" libraries={["places"]}>
+    <LoadScript googleMapsApiKey={key} libraries={["places"]}>
       <div>
         <PlacesAutocomplete value={value} onChange={onChange} onSelect={handleSelect}>
           {({ getInputProps, suggestions, getSuggestionItemProps }) => (

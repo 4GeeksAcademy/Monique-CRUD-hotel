@@ -74,6 +74,7 @@
 	},
 	"dependencies": {
 		"@react-google-maps/api": "^2.20.6",
+		"axios": "^1.8.3",
 		"bcryptjs": "^3.0.2",
 		"bootstrap": "^5.3.3",
 		"cors": "^2.8.5",

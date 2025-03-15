@@ -1,7 +1,7 @@
 const getState = ({ getStore, getActions, setStore }) => {
-    return {
-        store: {
-            message: null,
+	return {
+		store: {
+			message: null,
 			demo: [
 				{
 					title: "FIRST",
@@ -14,76 +14,123 @@ const getState = ({ getStore, getActions, setStore }) => {
 					initial: "white"
 				}
 			],
-			auth: false
-                
-        },
-       
-       
-        actions: {
-         // Use getActions to call a function within a fuction
+			auth: false,
+			categories: [],
+			rooms: []
+
+		},
+
+
+		actions: {
+			// Use getActions to call a function within a fuction
 			exampleFunction: () => {
 				getActions().changeColor(0, "green");
 			},
 
-			logout: () => {
-				console.log("logout")	
-				localStorage.removeItem("token");
-				setStore({ auth: false});
+			setCategories: (categories) => {
+				setStore({ categories })
 			},
 
-			login: (email, password) => {
+			setRooms: (rooms) => {
+				store.rooms = rooms; // Aquí actualizamos el estado de rooms
+			},
+
+			logout: () => {
+				console.log("logout")
+				localStorage.removeItem("token");
+				setStore({ auth: false });
+			},
+
+			loginUser: (email, password) => {
 				const requestOptions = {
 					method: "POST",
-					headers: {"Content-Type": "application/json"},
-					body: JSON.stringify({email, password}),
+					headers: { "Content-Type": "application/json" },
+					body: JSON.stringify({ email, password }),
 				};
-		
-				return fetch(process.env.BACKEND_URL+ "/api/loginhotel", requestOptions)
+
+				return fetch(process.env.BACKEND_URL + "/api/loginUser", requestOptions)
 					.then(response => {
 						console.log(response.status)
-						if (response.status == 200){
+						if (response.status == 200) {
 							return response.json().then(data => {
 								localStorage.setItem("token", data.access_token);
 								setStore({ auth: true });
 								return true; // Exito
 							});
-						} else{
-								setStore({ auth: false });
-								return false; //fallo el login
+						} else {
+							setStore({ auth: false });
+							return false; //fallo el login
 						}
-			})
-		},
+					})
+			},
+
+			signupUser: (username, email, password) => {
+				const requestOptions = {
+					method: "POST",
+					headers: { "Content-Type": "application/json" },
+					body: JSON.stringify({username, email, password })
+				};
+
+				fetch(process.env.BACKEND_URL + "/api/signupUser", requestOptions)
+					.then(response => response.text())
+					.then((result) => console.log(result))
+
+			},
+
+			login: (email, password) => {
+				const requestOptions = {
+					method: "POST",
+					headers: { "Content-Type": "application/json" },
+					body: JSON.stringify({ email, password }),
+				};
+
+				return fetch(process.env.BACKEND_URL + "/api/loginhotel", requestOptions)
+					.then(response => {
+						console.log(response.status)
+						if (response.status == 200) {
+							return response.json().then(data => {
+								localStorage.setItem("token", data.access_token);
+								setStore({ auth: true });
+								return true; // Exito
+							});
+						} else {
+							setStore({ auth: false });
+							return false; //fallo el login
+						}
+					})
+			},
 
 			signup: (nombre, email, password) => {
 				const requestOptions = {
 					method: "POST",
-					headers: {"Content-Type": "application/json"},
+					headers: { "Content-Type": "application/json" },
 					body: JSON.stringify(
 						{
-                            "nombre": nombre,
-                            "email":email,
-							"password":password
+							"nombre": nombre,
+							"email": email,
+							"password": password
 						}
 					)
 				};
-		
-				fetch(process.env.BACKEND_URL+ "/api/signuphotel", requestOptions)
+
+				fetch(process.env.BACKEND_URL + "/api/signuphotel", requestOptions)
 					.then(response => response.text())
-  					.then((result) => console.log(result))
-					
+					.then((result) => console.log(result))
+
 			},
-            getMessage: async () => {
-                try {
-                    const resp = await fetch(process.env.BACKEND_URL + "/api/hello");
-                    const data = await resp.json();
-                    setStore({ message: data.message });
-                    return data;
-                } catch (error) {
-                    console.log("Error loading message from backend", error);
-                }
-            },
-        },
-    };
+			getMessage: async () => {
+				try {
+					const resp = await fetch(process.env.BACKEND_URL + "/api/hello");
+					const data = await resp.json();
+					setStore({ message: data.message });
+					return data;
+				} catch (error) {
+					console.log("Error loading message from backend", error);
+				}
+			},
+
+		},
+	};
 };
 
-export default  getState;
+export default getState;

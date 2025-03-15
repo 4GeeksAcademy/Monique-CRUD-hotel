@@ -1,10 +1,10 @@
 import React, { useState, useContext } from "react";
-import SignupHotel from "../pages/signupHotel";
-import LoginHotel from "../pages/loginHotel";
+import SignupUser from "../pages/signupUser";
+import LoginUser from "../pages/loginUser";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Context } from "../store/appContext";
 
-const AuthHotel = () => {
+const AuthUser = () => {
     const { store, actions } = useContext(Context);
 	const [isSignup, setIsSignup] = useState(false); //Corrección del nombre de estado
 
@@ -19,9 +19,9 @@ const AuthHotel = () => {
 			
 						<div>
 							{isSignup ?(
-								<SignupHotel />
+								<SignupUser />
 							) : (
-								<LoginHotel/>
+								<LoginUser/>
 							)}
 							<div className="button-container">
 								{isSignup ? (
@@ -36,4 +36,4 @@ const AuthHotel = () => {
 	);
 };
 
-export default AuthHotel;
+export default AuthUser;

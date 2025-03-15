@@ -1,33 +1,33 @@
 from flask_sqlalchemy import SQLAlchemy
 
-
+# Inicializamos la instancia de SQLAlchemy
 db = SQLAlchemy()
 
+# Definición del modelo User
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(120), unique=True, nullable=False)
-    password = db.Column(db.String(80), unique=False, nullable=False)
-    is_active = db.Column(db.Boolean(), unique=False, nullable=False)
-
+    password = db.Column(db.String(80), nullable=False)  # Mejor no hacer unique en contraseñas
+    is_active = db.Column(db.Boolean(), default=True, nullable=False)  # Default a True para usuario activo
+    
     def __repr__(self):
-        return f'<User {self.email}>'
+        return f'<User {self.id}>'
 
     def serialize(self):
+        """Método de serialización, omite la contraseña por razones de seguridad"""
         return {
             "id": self.id,
             "email": self.email,
-            # do not serialize the password, its a security breach
+            # No se debe serializar la contraseña por razones de seguridad
         }
 
-
-    
 class Hoteles(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    nombre = db.Column(db.String(120), unique=True, nullable=True)
+    nombre = db.Column(db.String(120), unique=True, nullable=False)
     email = db.Column(db.String(80), unique=True, nullable=False)
     password = db.Column(db.String(80), nullable=False)
-   
-    
+
+      
     def __repr__(self):
         return f'<Hoteles {self.nombre}>'
 
@@ -37,20 +37,64 @@ class Hoteles(db.Model):
             "nombre": self.nombre,
             "email": self.email,
             "password": self.password,
+             
+        }
+    
+class Theme(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    nombre = db.Column(db.String(120), unique=True, nullable=False)
+
+    def __repr__(self):
+        return f'<Theme {self.id}>'
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "nombre": self.nombre,
+        }
+
+class HotelTheme(db.Model):
+    __tablename__ = 'hoteltheme'
+    id = db.Column(db.Integer, primary_key=True)
+    id_hoteles = db.Column(db.Integer, db.ForeignKey('hoteles.id'), nullable=True)
+    id_theme = db.Column(db.Integer, db.ForeignKey('theme.id'), nullable=True)
+
+    hoteles = db.relationship('Hoteles', backref='hoteltheme')
+    theme = db.relationship('Theme', backref='hoteltheme')
+
+    def __repr__(self):
+        return f'<HotelTheme {self.id}>'
+    
+    def serialize(self):
+        return {
+            "id": self.id,
+            "id_hoteles": self.id_hoteles,
+            "id_theme": self.id_theme
+        }
+
+# Definición del modelo Category
+class Category(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    nombre = db.Column(db.String(120), nullable=False)
+
+    def __repr__(self):
+        return f'<Category {self.nombre}>'
+            # do not serialize the password, its a security breach
+    def serialize(self):
+        return {
+            "id": self.id,
+            "nombre": self.nombre
         }
     
 class Branches(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     nombre = db.Column(db.String(120), nullable=False)
     direccion = db.Column(db.String(120), nullable=False)
-    longitud = db.Column(db.Float, nullable=False)
-    latitud = db.Column(db.Float, nullable=False)
-    hotel_id = db.Column(db.Integer, db.ForeignKey('hoteles.id'), nullable=False)
-
-    hotel = db.relationship("Hoteles")
+    longitud = db.Column(db.Float, nullable=True)
+    latitud = db.Column(db.Float, nullable=True)
     
     def __repr__(self):
-        return f'<Branches {self.nombre}>'
+        return f'<Branch {self.nombre}>'
 
     def serialize(self):
         return {
@@ -59,9 +103,23 @@ class Branches(db.Model):
             "direccion": self.direccion,
             "longitud": self.longitud,
             "latitud": self.latitud,
-            "hotel_id": self.hotel_id
+                     
         }
+      
+class Room(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    nombre = db.Column(db.String(120), nullable=False)
     
+    def __repr__(self):
+        return f'<Room {self.nombre}>'
+            # do not serialize the password, its a security breach
+        
+    def serialize(self):
+            return {
+                'id': self.id,
+                'nombre': self.nombre,
+        }
+
 class Maintenance(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     nombre = db.Column(db.String(120), nullable=False)
@@ -73,6 +131,24 @@ class Maintenance(db.Model):
 
     def __repr__(self):
         return f'<Maintenance {self.nombre}>'
+      
+    def serialize(self):
+      return {
+          "id": self.id,
+          "nombre": self.nombre,
+          "email": self.email,
+          "password": self.password,
+        }
+      
+class HouseKeeper(db.Model):
+    __tablename__ = 'housekeeper'
+    id = db.Column(db.Integer, primary_key=True)
+    nombre = db.Column(db.String(120), unique=True, nullable=False)
+    email = db.Column(db.String(120), unique=True, nullable=False)
+    password = db.Column(db.String(80), unique=False, nullable=False)
+    
+    def __repr__(self):
+        return f'<HouseKeeper {self.id}>'
 
     def serialize(self):
         return {
@@ -80,21 +156,63 @@ class Maintenance(db.Model):
             "nombre": self.nombre,
             "email": self.email,
             "password": self.password,
-            "hotel_id": self.hotel_id
         }
     
-class Administrador(db.Model):
+class HouseKeeperTask(db.Model):
+    __tablename__ = 'housekeepertask'
     id = db.Column(db.Integer, primary_key=True)
-    email = db.Column(db.String(120), unique=True, nullable=False)
-    password = db.Column(db.String(255), unique=False, nullable=False)
-    is_active = db.Column(db.Boolean(), unique=False, nullable=False)
+    nombre = db.Column(db.String(120), nullable=False)
+    assignment_date = db.Column(db.String(80), unique=False, nullable=False)
+    submission_date = db.Column(db.String(80), unique=False, nullable=False)
+    id_room = db.Column(db.Integer, db.ForeignKey('room.id'), nullable=True)
+    id_housekeeper = db.Column(db.Integer, db.ForeignKey('housekeeper.id'), nullable=True)
+
+    room = db.relationship('Room', backref='housekeepertask')
+    housekeeper = db.relationship('HouseKeeper', backref='housekeepertask')
 
     def __repr__(self):
-        return f'<Administrador {self.email}>'
+        return f'<HouseKeeperTask {self.id}>'
 
     def serialize(self):
         return {
             "id": self.id,
-            "email": self.email,
-            # do not serialize the password, its a security breach
+            "nombre": self.nombre,
+            "assignment_date": self.assignment_date,
+            "submission_date": self.submission_date,
+            "id_room": self.id_room,
+            "id_housekeeper": self.id_housekeeper,
+        }
+    
+class MaintenanceTask(db.Model):
+    __tablename__ = 'maintenancetask'
+    id = db.Column(db.Integer, primary_key=True)
+    nombre = db.Column(db.String(120), nullable=False)
+    photo = db.Column(db.String(255), nullable=True)
+    status = db.Column(db.String(120), nullable=True)
+    room_id = db.Column(db.Integer, db.ForeignKey('room.id'), nullable=True)
+    maintenance_id = db.Column(db.Integer, db.ForeignKey('maintenance.id'), nullable=False)
+    housekeeper_id = db.Column(db.Integer, db.ForeignKey('housekeeper.id'), nullable=True)
+    category_id = db.Column(db.Integer, db.ForeignKey('category.id'), nullable=False)
+
+    # Relaciones
+    room = db.relationship('Room')
+    maintenance = db.relationship('Maintenance')
+    housekeeper = db.relationship('HouseKeeper')
+    category = db.relationship('Category')
+
+    def __repr__(self):
+        return f'<MaintenanceTask {self.nombre}>'
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "nombre": self.nombre,
+            # "branch_id": self.branch_id
+        # }
+            "status": self.status,
+            "room": self.room.serialize() if self.room else None,  # Detalles de la habitación
+            "maintenance": self.maintenance.serialize() if self.maintenance else None,  # Detalles del mantenimiento
+            "category": self.category.serialize() if self.category else None,  # Detalles de la categoría
+            "housekeeper": self.housekeeper.serialize() if self.housekeeper else None,
+
         }
