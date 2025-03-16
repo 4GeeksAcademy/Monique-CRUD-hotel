@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-
 
 const HouseKeeperTask = () => {
   const [houseKeeperTasks, setHouseKeeperTasks] = useState([]);
   const [nombre, setNombre] = useState('');
+  const [photo, setPhoto] = useState('');
+  const [condition, setCondition] = useState('');
   const [assignmentDate, setAssignmentDate] = useState('');
   const [submissionDate, setSubmissionDate] = useState('');
   const [idRoom, setIdRoom] = useState('');
@@ -12,8 +12,6 @@ const HouseKeeperTask = () => {
   const [rooms, setRooms] = useState([]);
   const [housekeepers, setHousekeepers] = useState([]);
   const [editingId, setEditingId] = useState(null);
-  const navigate = useNavigate();
-
 
   const backendUrl = process.env.REACT_APP_BACKEND_URL || process.env.BACKEND_URL;
 
@@ -56,7 +54,7 @@ const HouseKeeperTask = () => {
   // Crear una nueva tarea de HouseKeeper
   const createHouseKeeperTask = async () => {
     // Validación de campos
-    if (!nombre || !assignmentDate || !submissionDate || !idRoom || !idHousekeeper) {
+    if (!nombre || !photo || !condition || !assignmentDate || !submissionDate || !idRoom || !idHousekeeper) {
       alert('Por favor, completa todos los campos');
       return;
     }
@@ -69,6 +67,8 @@ const HouseKeeperTask = () => {
         },
         body: JSON.stringify({
           nombre,
+          photo,
+          condition,
           assignment_date: assignmentDate,
           submission_date: submissionDate,
           id_room: idRoom,
@@ -94,7 +94,7 @@ const HouseKeeperTask = () => {
 
   // Actualizar una tarea de HouseKeeper
   const updateHouseKeeperTask = async () => {
-    if (!nombre || !assignmentDate || !submissionDate || !editingId || !idRoom || !idHousekeeper) {
+    if (!nombre || !photo || !condition || !assignmentDate || !submissionDate || !editingId || !idRoom || !idHousekeeper) {
       alert('Por favor, completa todos los campos para editar');
       return;
     }
@@ -107,9 +107,11 @@ const HouseKeeperTask = () => {
         },
         body: JSON.stringify({
           nombre,
+          photo,
+          condition,
           assignment_date: assignmentDate,
           submission_date: submissionDate,
-          id_room: idRoom || null,
+          id_room: idRoom,
           id_housekeeper: idHousekeeper,
         }),
       });
@@ -156,6 +158,8 @@ const HouseKeeperTask = () => {
   // Restablecer el formulario
   const resetForm = () => {
     setNombre('');
+    setPhoto('');
+    setCondition('');
     setAssignmentDate('');
     setSubmissionDate('');
     setIdRoom('');
@@ -174,6 +178,8 @@ const HouseKeeperTask = () => {
     const taskToEdit = houseKeeperTasks.find((task) => task.id === id);
     if (taskToEdit) {
       setNombre(taskToEdit.nombre);
+      setPhoto(taskToEdit.photo);
+      setCondition(taskToEdit.condition);
       setAssignmentDate(taskToEdit.assignment_date);
       setSubmissionDate(taskToEdit.submission_date);
       setIdRoom(taskToEdit.id_room);
@@ -206,7 +212,29 @@ const HouseKeeperTask = () => {
                 onChange={(e) => setNombre(e.target.value)}
               />
             </div>
-          
+
+            <div className="form-group">
+              <label htmlFor="photo">Foto</label>
+              <input
+                type="text"
+                className="form-control"
+                id="photo"
+                value={photo}
+                onChange={(e) => setPhoto(e.target.value)}
+              />
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="condition">Condición</label>
+              <input
+                type="text"
+                className="form-control"
+                id="condition"
+                value={condition}
+                onChange={(e) => setCondition(e.target.value)}
+              />
+            </div>
+
             <div className="form-group">
               <label htmlFor="assignmentDate">Fecha de Asignación</label>
               <input
@@ -292,6 +320,7 @@ const HouseKeeperTask = () => {
           <thead>
             <tr>
               <th>Nombre</th>
+              <th>Condición</th>
               <th>Asignación</th>
               <th>Entrega</th>
               <th>ID de Habitación</th> {/* Nueva columna */}
@@ -303,6 +332,7 @@ const HouseKeeperTask = () => {
             {houseKeeperTasks.map((task) => (
               <tr key={task.id}>
                 <td>{task.nombre}</td>
+                <td>{task.condition}</td>
                 <td>{task.assignment_date}</td>
                 <td>{task.submission_date}</td>
                 <td>{task.id_room}</td> {/* Muestra el ID de la habitación */}
@@ -325,11 +355,6 @@ const HouseKeeperTask = () => {
             ))}
           </tbody>
         </table>
-        <div className="d-flex justify-content-center">
-        <button className="btn btn-secondary" onClick={() => navigate("/privateHotel")}>
-          Volver
-        </button>
-      </div>
       </div>
     </div>
   );

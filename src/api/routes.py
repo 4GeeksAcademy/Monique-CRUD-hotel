@@ -31,7 +31,6 @@ def handle_hello():
     }
     return jsonify(response_body), 200
 
-
 @api.route('/user', methods=['GET'])
 def get_users():
     users = User.query.all()
@@ -40,8 +39,9 @@ def get_users():
     all_users = list(map(lambda x: x.serialize(), users))
     return jsonify(message="Users", users=all_users), 200
 
-   
+
 # rutas para hoteles
+
 @api.route('/hoteles', methods=['GET'])
 def obtener_hoteles():
     hoteles = Hoteles.query.all()  # Obtener todos los hotel
@@ -56,7 +56,6 @@ def obtener_hotel_por_id(id):
         return jsonify({"error": "Hotel no encontrado"}), 404
    
     return jsonify(hotel.serialize()), 200
-
 
 @api.route('/hoteles', methods=['POST'])
 def crear_hoteles():
@@ -83,7 +82,7 @@ def crear_hoteles():
     nuevo_hotel =Hoteles(
         nombre=data["nombre"],
         email=data["email"],
-        password=data["password"]
+            password=data["password"]
     )
    
     db.session.add(nuevo_hotel)
@@ -238,8 +237,18 @@ def actualizar_category(id):
     category.nombre = data.get("nombre", category.nombre)
     db.session.commit()
 
+    # if "nombre" in data:
+    #     category.nombre = data["nombre"]
+
+    # try:
+    #     db.session.commit()
+    # except Exception as e:
+    #     db.session.rollback()  # Si ocurre un error, deshacer los cambios
+    #     return jsonify({"error": f"Error al actualizar la categoría: {str(e)}"}), 500
+
     return jsonify(category.serialize()), 200  # Código 200 para solicitud exitosa
 
+# route para Branches
 # Obtener todos los branches
 @api.route('/branches', methods=['GET'])
 def obtener_branches():
@@ -265,7 +274,7 @@ def crear_branch():
         direccion=data["direccion"],
         longitud=data["longitud"],
         latitud=data["latitud"],
-        hotel_id=data.get("hotel_id") # Puede ser opcional
+        hotel_id=data["hotel_id"]
     )
 
     db.session.add(nuevo_branch)
@@ -282,7 +291,8 @@ def actualizar_branch(id):
     branch.direccion = data.get("direccion", branch.direccion)
     branch.longitud = data.get("longitud", branch.longitud)
     branch.latitud = data.get("latitud", branch.latitud)
-        
+    branch.hotel_id = data.get("hotel_id", branch.hotel_id)
+    
     db.session.commit()
 
     return jsonify(branch.serialize()), 200
@@ -373,6 +383,7 @@ def crear_room():
     # Crear nueva habitacion
     nuevo_room = Room(
         nombre=data["nombre"],
+        branch_id=data["branchId"]
     )
     db.session.add(nuevo_room)
     db.session.commit()
@@ -435,17 +446,32 @@ def get_maint(id):
     return jsonify([maint.serialize() for maint in maint]), 200
 
 # Ruta para crear un nuevo trabajador de mantenimiento
+from flask import jsonify
+
 @api.route('/maintenance', methods=['POST'])
 def create_maintenance():
     data = request.get_json()
-        # Verificamos que los datos estén presentes
-    if not data.get('nombre') or not data.get('email') or not data.get('password'):
+    
+    # Verificamos que los datos estén presentes
+    if not data.get('nombre') or not data.get('email') or not data.get('password') or not data.get('hotel_id') or not data.get('branch_id'):
         return jsonify({"error": "Missing data"}), 400
+    
+    # Verificamos si el hotel existe
+    hotel = Hoteles.query.get(data['hotel_id'])
+    if not hotel:
+        return jsonify({"error": "Hotel not found"}), 404
+    
+    # Verificamos si la sucursal existe
+    branch = Branches.query.get(data['branch_id'])
+    if not branch:
+        return jsonify({"error": "Branch not found"}), 404
     
     nuevo_maint = Maintenance(
         nombre=data['nombre'],
         email=data['email'],
         password=data['password'],
+        hotel_id=data['hotel_id'],
+        branch_id=data['branch_id']
     )
     
     db.session.add(nuevo_maint)
@@ -453,18 +479,33 @@ def create_maintenance():
     
     return jsonify(nuevo_maint.serialize()), 201
 
+
 # Ruta para actualizar un trabajador de mantenimiento
 @api.route('/maintenance/<int:id>', methods=['PUT'])
 def update_maintenance(id):
     maint = Maintenance.query.get_or_404(id)
     data = request.get_json()
+    
+    # Verificamos si el hotel existe
+    hotel = Hoteles.query.get(data['hotel_id'])
+    if not hotel:
+        return jsonify({"error": "Hotel not found"}), 404
+    
+    # Verificamos si la sucursal existe
+    branch = Branches.query.get(data['branch_id'])
+    if not branch:
+        return jsonify({"error": "Branch not found"}), 404
+    
     maint.nombre = data['nombre']
     maint.email = data['email']
     maint.password = data['password']
-       
+    maint.hotel_id = data['hotel_id']
+    maint.branch_id = data['branch_id']
+    
     db.session.commit()
    
     return jsonify(maint.serialize())
+
 
 # Ruta para eliminar un trabajador de mantenimiento
 @api.route('/maintenance/<int:id>', methods=['DELETE'])
@@ -475,6 +516,8 @@ def delete_maintenance(id):
     db.session.commit()
     
     return jsonify({"message": "Trabajador de mantenimiento eliminado con éxito"}), 200
+
+# houseKeeper
 
 @api.route('/housekeepers', methods=['POST'])
 def create_housekeeper():
@@ -488,6 +531,8 @@ def create_housekeeper():
         nombre=data['nombre'],
         email=data['email'],
         password=data['password'],  # En un proyecto real deberías cifrar la contraseña
+        hotel_id=data['hotel_id'],
+        id_branche=data.get('id_branche')
     )
 
     db.session.add(new_housekeeper)
@@ -524,7 +569,9 @@ def update_housekeeper(id):
     housekeeper.nombre = data.get('nombre', housekeeper.nombre)
     housekeeper.email = data.get('email', housekeeper.email)
     housekeeper.password = data.get('password', housekeeper.password)
- 
+    housekeeper.hotel = data.get('hotel', housekeeper.hotel)
+    housekeeper.id_branche = data.get('id_branche', housekeeper.id_branche)
+
     db.session.commit()
 
     return jsonify(housekeeper.serialize()), 200
@@ -583,7 +630,7 @@ def create_housekeeper_task():
     data = request.get_json()
     
     # Validate if all required fields are in the request
-    if not data.get('nombre') or not data.get('assignment_date') or not data.get('submission_date'):
+    if not data.get('nombre') or not data.get('photo') or not data.get('condition') or not data.get('assignment_date') or not data.get('submission_date'):
         return jsonify({"error": "Missing required data"}), 400
 
     # Check if room and housekeeper IDs are valid
@@ -596,6 +643,8 @@ def create_housekeeper_task():
     # Create new HouseKeeperTask
     new_task = HouseKeeperTask(
         nombre=data['nombre'],
+        photo=data['photo'],
+        condition=data['condition'],
         assignment_date=data['assignment_date'],
         submission_date=data['submission_date'],
         id_room=data['id_room'],
@@ -636,6 +685,10 @@ def update_housekeeper_task(id):
     # Update fields if they are provided in the request
     if data.get('nombre'):
         task.nombre = data['nombre']
+    if data.get('photo'):
+        task.photo = data['photo']
+    if data.get('condition'):
+        task.condition = data['condition']
     if data.get('assignment_date'):
         task.assignment_date = data['assignment_date']
     if data.get('submission_date'):
@@ -662,7 +715,6 @@ def delete_housekeeper_task(id):
 
     return jsonify({"message": "HouseKeeperTask deleted successfully"}), 200
 
-# Traer tareas de mantenimento
 @api.route('/maintenancetasks', methods=['GET'])
 def get_all_maintenance_tasks():
     """Obtener todas las tareas de mantenimiento"""
@@ -685,7 +737,7 @@ def create_maintenance_task():
     try:
         nombre = data.get('nombre')
         photo = data.get('photo')
-        status = data.get('status')
+        condition = data.get('condition')
         room_id = data.get('room_id')
         maintenance_id = data.get('maintenance_id')
         housekeeper_id = data.get('housekeeper_id')
@@ -694,7 +746,7 @@ def create_maintenance_task():
         new_task = MaintenanceTask(
             nombre=nombre,
             photo=photo,
-            status=status,
+            condition=condition,
             room_id=room_id,
             maintenance_id=maintenance_id,
             housekeeper_id=housekeeper_id,
@@ -723,13 +775,12 @@ def update_maintenance_task(id):
     try:
         maintenance_task.nombre = data.get('nombre', maintenance_task.nombre)
         maintenance_task.photo = data.get('photo', maintenance_task.photo)
-        maintenance_task.status = data.get('status', maintenance_task.status)
+        maintenance_task.condition = data.get('condition', maintenance_task.condition)
         maintenance_task.room_id = data.get('room_id', maintenance_task.room_id)
         maintenance_task.maintenance_id = data.get('maintenance_id', maintenance_task.maintenance_id)
         maintenance_task.housekeeper_id = data.get('housekeeper_id', maintenance_task.housekeeper_id)
         maintenance_task.category_id = data.get('category_id', maintenance_task.category_id)
 
-        
         db.session.commit()
 
         return jsonify(maintenance_task.serialize()), 200
@@ -755,6 +806,10 @@ def delete_maintenance_task(id):
 
         return jsonify({"message": "Error al eliminar la tarea de mantenimiento", "error": str(e)}), 400
 
+# @api.route('/rooms', methods=['GET'])
+# def get_all_rooms():
+#     rooms = Room.query.all()
+#     return jsonify([room.serialize() for room in rooms]), 200
 
 # crear un login de hotel
 
@@ -799,78 +854,9 @@ def signuphotel():
     }
     return jsonify(response_body), 200
 
-api.route("/privateHotel", methods=["GET"])
-@jwt_required()
-def privateHotel():
-    current_user = get_jwt_identity()  # Obtiene la identidad del usuario desde el token
-    
-    # Buscar al usuario en la base de datos
-    user = User.query.filter_by(email=current_user).first()
-    
-    if not user:
-        return jsonify({"msg": "Usuario no encontrado"}), 404
-    
-    # Obtener los datos del hotel y la sucursal asociada al usuario
-    hotel = user.hotel  # Relación con el hotel
-    sucursal = user.sucursal  # Relación con la sucursal
-    
-    # Si no se encuentra el hotel o la sucursal
-    if not hotel or not sucursal:
-        return jsonify({"msg": "El usuario no tiene un hotel o sucursal asociada"}), 400
-    
-    # Crear un mensaje de bienvenida con la información del hotel y sucursal
-    mensaje_bienvenida = {
-        "msg": f"Bienvenido, {user.nombre}. Estás actualmente en el hotel '{hotel.nombre}' y en la sucursal '{sucursal.nombre}'."
-    }
-    return jsonify(mensaje_bienvenida), 200
-
-#login User
-@api.route("/loginUser", methods=["POST"])
-def loginUser():
-    email = request.json.get("email", None)
-    password = request.json.get("password", None)
-    
-    user = User.query.filter_by(email=email).first()
-    
-     # Si no se encuentra el hotel
-    if user is None:
-        return jsonify({"msg": "Usuario no encontrado"}), 401
-
-    # Verificar la contraseña (deberías usar hashing para contraseñas en producción)
-    if password != user.password:
-        return jsonify({"msg": "Correo o contraseña incorrectos"}), 401
-    
-    access_token = create_access_token(identity=email)
-    return jsonify(access_token=access_token), 200
-
-# crear signup de hotel
-@api.route("/signupUser", methods=["POST"])
-def signupUser():
-     # Obtener los datos de la solicitud de registro
-    body = request.get_json()
-
-    # Verificar si el correo ya está registrado
-    user = User.query.filter_by(email=body["email"]).first()
-    
-    if user:
-        return jsonify({"msg": "Ya se encuentra un usuario con ese correo"}), 401
-
-    # Crear un nuevo User
-    user = User(email=body["email"], password=body["password"], username=body["username"])
-    db.session.add(user)
-    db.session.commit()
-    # Responder con mensaje de éxito
-    response_body = {
-        "msg": "Usuario creado exitosamente"
-    }
-    return jsonify(response_body), 200
-
 # pagina privada de hotel         
-@api.route("/privateUser", methods=["GET"])
+@api.route("/privatehotel", methods=["GET"])
 @jwt_required()
-def privateUser():
+def privatehotel():
     current_user = get_jwt_identity() #obtiene la identidad del usuario desde el token
     return jsonify(logget_in_as=current_user), 200
-
-if __name__ == '__main__':
-    app.run(debug=True)

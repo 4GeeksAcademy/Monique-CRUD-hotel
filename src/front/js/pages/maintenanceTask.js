@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 const MaintenanceTask = () => {
   const [maintenanceTasks, setMaintenanceTasks] = useState([]);
   const [nombre, setNombre] = useState('');
   const [photo, setPhoto] = useState('');
-  const [status, setStatus] = useState('');
+  const [condition, setCondition] = useState('');
   const [idRoom, setIdRoom] = useState('');
   const [idMaintenance, setIdMaintenance] = useState('');
   const [idHousekeeper, setIdHousekeeper] = useState('');
@@ -15,7 +14,6 @@ const MaintenanceTask = () => {
   const [housekeepers, setHousekeepers] = useState([]);
   const [categories, setCategories] = useState([]);
   const [editingId, setEditingId] = useState(null);
-  const navigate = useNavigate();
 
   const backendUrl = process.env.REACT_APP_BACKEND_URL || process.env.BACKEND_URL;
 
@@ -64,7 +62,7 @@ const MaintenanceTask = () => {
 
   // Crear una nueva tarea de mantenimiento
   const createMaintenanceTask = async () => {
-    if (!nombre || !status || !idMaintenance || !idCategory) {
+    if (!nombre || !photo || !condition || !idRoom || !idMaintenance || !idHousekeeper || !idCategory) {
       alert('Por favor, completa todos los campos');
       return;
     }
@@ -78,16 +76,12 @@ const MaintenanceTask = () => {
         body: JSON.stringify({
           nombre,
           photo,
-          status,
-          room_id: idRoom || null, //no es obligatorio
+          condition,
+          room_id: idRoom,
           maintenance_id: idMaintenance,
+          housekeeper_id: idHousekeeper,
           category_id: idCategory,
-          housekeeper_id: idHousekeeper || null,
         }),
-        // Si housekeeper_id está disponible, lo agregas al cuerpo de la solicitud
-        if(idHousekeeper) {
-          bodyData.housekeeper_id = idHousekeeper;
-        }
       });
 
       if (response.ok) {
@@ -105,7 +99,7 @@ const MaintenanceTask = () => {
 
   // Actualizar una tarea de mantenimiento
   const updateMaintenanceTask = async () => {
-    if (!nombre || !status || !idMaintenance || !idCategory || !editingId) {
+    if (!nombre || !photo || !condition || !idRoom || !idMaintenance || !idHousekeeper || !idCategory || !editingId) {
       alert('Por favor, completa todos los campos para editar');
       return;
     }
@@ -119,10 +113,10 @@ const MaintenanceTask = () => {
         body: JSON.stringify({
           nombre,
           photo,
-          status,
-          room_id: idRoom || null,
+          condition,
+          room_id: idRoom,
           maintenance_id: idMaintenance,
-          housekeeper_id: idHousekeeper || null,
+          housekeeper_id: idHousekeeper,
           category_id: idCategory,
         }),
       });
@@ -167,7 +161,7 @@ const MaintenanceTask = () => {
   const resetForm = () => {
     setNombre('');
     setPhoto('');
-    setStatus('');
+    setCondition('');
     setIdRoom('');
     setIdMaintenance('');
     setIdHousekeeper('');
@@ -187,7 +181,7 @@ const MaintenanceTask = () => {
     if (taskToEdit) {
       setNombre(taskToEdit.nombre);
       setPhoto(taskToEdit.photo);
-      setStatus(taskToEdit.status);
+      setCondition(taskToEdit.condition);
       setIdRoom(taskToEdit.room.id);
       setIdMaintenance(taskToEdit.maintenance.id);
       setIdHousekeeper(taskToEdit.housekeeper.id);
@@ -232,13 +226,13 @@ const MaintenanceTask = () => {
             </div>
 
             <div className="form-group">
-              <label htmlFor="status">Estado</label>
+              <label htmlFor="condition">Condición</label>
               <input
                 type="text"
                 className="form-control"
-                id="status"
-                value={status}
-                onChange={(e) => setStatus(e.target.value)}
+                id="condition"
+                value={condition}
+                onChange={(e) => setCondition(e.target.value)}
               />
             </div>
 
@@ -309,6 +303,7 @@ const MaintenanceTask = () => {
                 ))}
               </select>
             </div>
+
             <button
               type="button"
               className="btn btn-primary"
@@ -316,8 +311,6 @@ const MaintenanceTask = () => {
             >
               {editingId ? 'Actualizar' : 'Crear'} Tarea
             </button>
-
-
             {editingId && (
               <button type="button" className="btn btn-primary" onClick={cancelEdit}>
                 Cancelar
@@ -332,7 +325,7 @@ const MaintenanceTask = () => {
         <thead>
           <tr>
             <th>Nombre</th>
-            <th>Estado</th>
+            <th>Condición</th>
             <th>Habitación</th>
             <th>Mantenimiento</th>
             <th>Housekeeper</th>
@@ -344,7 +337,7 @@ const MaintenanceTask = () => {
           {maintenanceTasks.map((task) => (
             <tr key={task.id}>
               <td>{task.nombre}</td>
-              <td>{task.status}</td>
+              <td>{task.condition}</td>
               <td>{task.room?.nombre}</td>
               <td>{task.maintenance?.nombre}</td>
               <td>{task.housekeeper?.nombre}</td>
@@ -367,7 +360,7 @@ const MaintenanceTask = () => {
           ))}
         </tbody>
       </table>
-      <div className="d-flex justify-content-center">
+      <div className="d-flex justify-content-center align-items-center mt-4">
         <button className="btn btn-secondary" onClick={() => navigate("/privateHotel")}>
           Volver
         </button>

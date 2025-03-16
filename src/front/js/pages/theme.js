@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import "../../styles/theme.css";
 
+
 const ThemeForm = () => {
     const [nombre, setNombre] = useState('');
     const [message, setMessage] = useState('');
@@ -120,11 +121,7 @@ const ThemeForm = () => {
     };
 
     const goToHome = () => {
-        navigate('/');  // Navegar a la página de inicio
-    };
-
-    const goBack = () => {
-        navigate(-1); // Volver a la página anterior sin necesidad de hacer login nuevamente
+        navigate('/');
     };
 
     return (
@@ -203,13 +200,6 @@ const ThemeForm = () => {
                     onClick={goToHome}
                 >
                     Go to Home
-                </button>
-                <button
-                    type="button"
-                    className="btn btn-secondary w-100 mt-2"
-                    onClick={goBack}
-                >
-                    Go Back
                 </button>
             </div>
         </div>

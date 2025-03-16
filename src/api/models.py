@@ -9,7 +9,8 @@ class User(db.Model):
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(80), nullable=False)  # Mejor no hacer unique en contraseñas
     is_active = db.Column(db.Boolean(), default=True, nullable=False)  # Default a True para usuario activo
-    
+    theme = db.Column(db.String(120), unique=True, nullable=False)
+
     def __repr__(self):
         return f'<User {self.id}>'
 
@@ -26,8 +27,7 @@ class Hoteles(db.Model):
     nombre = db.Column(db.String(120), unique=True, nullable=False)
     email = db.Column(db.String(80), unique=True, nullable=False)
     password = db.Column(db.String(80), nullable=False)
-
-      
+    
     def __repr__(self):
         return f'<Hoteles {self.nombre}>'
 
@@ -36,8 +36,7 @@ class Hoteles(db.Model):
             "id": self.id,
             "nombre": self.nombre,
             "email": self.email,
-            "password": self.password,
-             
+            "password": self.password
         }
     
 class Theme(db.Model):
@@ -90,11 +89,14 @@ class Branches(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     nombre = db.Column(db.String(120), nullable=False)
     direccion = db.Column(db.String(120), nullable=False)
-    longitud = db.Column(db.Float, nullable=True)
-    latitud = db.Column(db.Float, nullable=True)
+    longitud = db.Column(db.Float, nullable=False)
+    latitud = db.Column(db.Float, nullable=False)
+    hotel_id = db.Column(db.Integer, db.ForeignKey('hoteles.id'), nullable=False)
+
+    hotel = db.relationship("Hoteles")
     
     def __repr__(self):
-        return f'<Branch {self.nombre}>'
+        return f'<Branches {self.nombre}>'
 
     def serialize(self):
         return {
@@ -103,13 +105,15 @@ class Branches(db.Model):
             "direccion": self.direccion,
             "longitud": self.longitud,
             "latitud": self.latitud,
-                     
+            "hotel_id": self.hotel_id
         }
       
 class Room(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     nombre = db.Column(db.String(120), nullable=False)
-    
+    branch_id = db.Column(db.Integer, db.ForeignKey('branches.id'),nullable=False)
+    branch = db.relationship("Branches")
+
     def __repr__(self):
         return f'<Room {self.nombre}>'
             # do not serialize the password, its a security breach
@@ -118,6 +122,8 @@ class Room(db.Model):
             return {
                 'id': self.id,
                 'nombre': self.nombre,
+                'branch_id': self.branch_id,
+                'branch': self.branch.nombre if self.branch else None  # Se asume que la relación 'branch' tiene un campo 'nombre'
         }
 
 class Maintenance(db.Model):
@@ -126,8 +132,10 @@ class Maintenance(db.Model):
     email = db.Column(db.String(80), unique=True, nullable=False)
     password = db.Column(db.String(80), nullable=False)
     hotel_id = db.Column(db.Integer, db.ForeignKey('hoteles.id'), nullable=True)
+    branch_id = db.Column(db.Integer, db.ForeignKey('branches.id'),nullable=False)
     
     hotel = db.relationship('Hoteles')
+    branch = db.relationship("Branches")
 
     def __repr__(self):
         return f'<Maintenance {self.nombre}>'
@@ -138,6 +146,9 @@ class Maintenance(db.Model):
           "nombre": self.nombre,
           "email": self.email,
           "password": self.password,
+          "hotel_id": self.hotel_id,
+          "branch_id": self.branch_id,
+          'branch': self.branch.nombre if self.branch else None  # Se asume que la relación 'branch' tiene un campo 'nombre'
         }
       
 class HouseKeeper(db.Model):
@@ -146,7 +157,12 @@ class HouseKeeper(db.Model):
     nombre = db.Column(db.String(120), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(80), unique=False, nullable=False)
-    
+    hotel_id = db.Column(db.Integer, db.ForeignKey('hoteles.id'), nullable=True)
+    id_branche = db.Column(db.Integer, db.ForeignKey('branches.id'), nullable=True)
+
+    hotel = db.relationship('Hoteles')
+    branches = db.relationship('Branches')
+
     def __repr__(self):
         return f'<HouseKeeper {self.id}>'
 
@@ -156,12 +172,19 @@ class HouseKeeper(db.Model):
             "nombre": self.nombre,
             "email": self.email,
             "password": self.password,
+            "hotel_id": self.hotel_id,
+            "hotel_nombre": self.hotel.nombre if self.hotel else None,# Agregar el nombre del hotel
+            "id_branche": self.id_branche,
+            
+            
         }
     
 class HouseKeeperTask(db.Model):
     __tablename__ = 'housekeepertask'
     id = db.Column(db.Integer, primary_key=True)
-    nombre = db.Column(db.String(120), nullable=False)
+    nombre = db.Column(db.String(120), unique=True, nullable=False)
+    photo = db.Column(db.String(120), unique=True, nullable=False)
+    condition = db.Column(db.String(80), unique=False, nullable=False)
     assignment_date = db.Column(db.String(80), unique=False, nullable=False)
     submission_date = db.Column(db.String(80), unique=False, nullable=False)
     id_room = db.Column(db.Integer, db.ForeignKey('room.id'), nullable=True)
@@ -177,6 +200,8 @@ class HouseKeeperTask(db.Model):
         return {
             "id": self.id,
             "nombre": self.nombre,
+            "photo": self.photo,
+            "condition": self.condition,
             "assignment_date": self.assignment_date,
             "submission_date": self.submission_date,
             "id_room": self.id_room,
@@ -186,12 +211,12 @@ class HouseKeeperTask(db.Model):
 class MaintenanceTask(db.Model):
     __tablename__ = 'maintenancetask'
     id = db.Column(db.Integer, primary_key=True)
-    nombre = db.Column(db.String(120), nullable=False)
+    nombre = db.Column(db.String(120), unique=True, nullable=False)
     photo = db.Column(db.String(255), nullable=True)
-    status = db.Column(db.String(120), nullable=True)
-    room_id = db.Column(db.Integer, db.ForeignKey('room.id'), nullable=True)
+    condition = db.Column(db.String(120), nullable=True)
+    room_id = db.Column(db.Integer, db.ForeignKey('room.id'), nullable=False)
     maintenance_id = db.Column(db.Integer, db.ForeignKey('maintenance.id'), nullable=False)
-    housekeeper_id = db.Column(db.Integer, db.ForeignKey('housekeeper.id'), nullable=True)
+    housekeeper_id = db.Column(db.Integer, db.ForeignKey('housekeeper.id'), nullable=False)
     category_id = db.Column(db.Integer, db.ForeignKey('category.id'), nullable=False)
 
     # Relaciones
@@ -209,10 +234,10 @@ class MaintenanceTask(db.Model):
             "nombre": self.nombre,
             # "branch_id": self.branch_id
         # }
-            "status": self.status,
+            "photo": self.photo,
+            "condition": self.condition,
             "room": self.room.serialize() if self.room else None,  # Detalles de la habitación
             "maintenance": self.maintenance.serialize() if self.maintenance else None,  # Detalles del mantenimiento
+            "housekeeper": self.housekeeper.serialize() if self.housekeeper else None,  # Detalles del housekeeper
             "category": self.category.serialize() if self.category else None,  # Detalles de la categoría
-            "housekeeper": self.housekeeper.serialize() if self.housekeeper else None,
-
         }

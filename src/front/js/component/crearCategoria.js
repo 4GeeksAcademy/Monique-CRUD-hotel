@@ -58,7 +58,7 @@ const CrearCategoria = () => {
             }
             const data = await response.json(); // Esto asume que la respuesta es JSON
             console.log("Categoría creada:", data);
-            
+
             // Verificar si el componente está montado antes de actualizar el estado
             if (isMounted.current) {
                 setNombre(""); // Limpiar el campo de nombre
@@ -102,7 +102,9 @@ const CrearCategoria = () => {
                         </button>
                     </div>
                 </form>
+                
             </div>
+            
         </div>
     );
 };

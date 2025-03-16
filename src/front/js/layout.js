@@ -23,18 +23,13 @@ import CrearRoom from "./component/crearRoom";
 import ListaRoom from "./component/listaRoom";
 import Maintenance from "./component/listaMaintenance";
 import LoginHouseKeeper from "./pages/loginHouseKeeper";
-
 import PrivateHouseKeeper from './pages/privateHouseKeeper';
 import ProtectedPrivateHouseKeeper from './pages/ProtectedPrivateHouseKeeper';
 import HouseKeeperTask from './pages/HouseKeeperTask';
 import LoginHotel from "./pages/loginHotel";
 import SignupHotel from "./pages/signupHotel";
 import PrivateHotel from "./pages/privateHotel";
-import LoginUser from "./pages/loginUser";
-import SignupUser from "./pages/signupUser";
-import PrivateUser from "./pages/privateUser";
 import AuthHotel from "./component/authhotel";
-import AuthUser from "./component/authUser";
 import MaintenanceTask from './pages/maintenanceTask';
 
 import LoginMaintenance from "./pages/loginMaintenance";
@@ -80,11 +75,8 @@ const Layout = () => {
                         <Route element={<SignupHotel />} path="/signupHotel" />
                         <Route element={<LoginHotel />} path="/loginHotel" />
                         <Route element={<AuthHotel />} path="/authhotel" />
-                        <Route element={<PrivateUser />} path="/privateUser" />
-                        <Route element={<SignupUser />} path="/signupUser" />
-                        <Route element={<LoginUser />} path="/loginUser" />
-                        <Route element={<AuthUser />} path="/authUser" />
                         <Route element={<MaintenanceTask />} path="/maintenanceTask" />
+
                         <Route element={<LoginMaintenance />} path="/loginMaintenance" />
                         <Route element={<ProtectedPrivateMaintenance><PrivateMaintenance /></ProtectedPrivateMaintenance>} path="/privateMaintenance" />
 

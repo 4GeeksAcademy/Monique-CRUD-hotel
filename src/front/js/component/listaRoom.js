@@ -1,6 +1,7 @@
 import React, { useCallback, useContext, useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom"; // Cambié 'useHistory' por 'useNavigate' (si estás usando react-router v6)
+import { Link } from "react-router-dom";
 import { Context } from "../store/appContext";
+import { useNavigate } from "react-router-dom";
 
 const ListaRoom = () => {
   const [rooms, setRooms] = useState([]);
@@ -8,8 +9,7 @@ const ListaRoom = () => {
   const [error, setError] = useState(null);
   const [eliminando, setEliminando] = useState(null); // ID de la habitación que se está eliminando
   const { store, actions } = useContext(Context);
-  const navigate = useNavigate(); // Usamos useNavigate para ir atrás
-
+    const navigate = useNavigate();
   // Función para obtener la URL del backend de forma segura
   const getBackendUrl = () => {
     const baseUrl = process.env.BACKEND_URL;
@@ -33,18 +33,18 @@ const ListaRoom = () => {
       try {
         const response = await fetch(`${apiUrl}api/rooms`, {
           method: "GET",
-          headers: { "Content-Type": "application/json" },
-        });
+          headers: { "Content-Type": "application/json" }
+        })
         if (!response.ok) {
           throw new Error("Error al cargar las habitaciones");
         }
         const data = await response.json();
         setRooms(data);
-        actions.setRooms(data);
+        actions.setRooms(data)
       } catch (error) {
         setError(error.message);
       } finally {
-        setCargando(false);
+        setCargando(true);
       }
     };
 
@@ -87,12 +87,12 @@ const ListaRoom = () => {
         <Link to="/crearRoom" className="btn btn-success">Crear Habitación</Link>
       </div>
       <h2 className="text-center my-3">Lista de Habitaciones</h2>
-      
+      {(
+        <>
           <div className="row bg-light p-2 fw-bold border-bottom">
             <div className="col">Nombre</div>
             <div className="col text-center">Acciones</div>
           </div>
-
           {rooms?.map((room) => (
             <div key={room.id} className="row p-2 border-bottom align-items-center">
               <div className="col">{room.nombre}</div>
@@ -110,9 +110,9 @@ const ListaRoom = () => {
               </div>
             </div>
           ))}
-        
-      {/* Botón de volver */}
-      <div className="text-center mt-4">
+        </>
+      )}
+      <div className="d-flex justify-content-center align-items-center mt-4">
         <button className="btn btn-secondary" onClick={() => navigate("/privateHotel")}>
           Volver
         </button>

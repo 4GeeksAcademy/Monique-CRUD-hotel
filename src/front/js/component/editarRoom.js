@@ -1,3 +1,4 @@
+// src/component/editarRoom.js
 import React, { useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Context } from "../store/appContext";
@@ -35,7 +36,7 @@ const EditarRoom = () => {
         const data = await response.json();
         setNombre(data.nombre); // Asume que el objeto recibido tiene un campo "nombre"
       } catch (error) {
-        console.log(error);
+        console.log(error)
         setError(error.message);
       }
     };
@@ -56,7 +57,7 @@ const EditarRoom = () => {
       const response = await fetch(`${apiUrl}api/rooms/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ nombre }),
+        body: JSON.stringify({ nombre: nombre.trim() }),
       });
 
       if (!response.ok) {
@@ -64,42 +65,46 @@ const EditarRoom = () => {
         throw new Error(errorData.message || "Error al actualizar la habitación.");
       }
 
-      const data = await response.json(); // Datos actualizados
-      alert("Habitación actualizada exitosamente.");
-      navigate("/listaRoom");
+      alert("Habitación actualizada correctamente.");
+      navigate("/listaRooms"); // Redirigir a la lista de habitaciones
     } catch (error) {
-      setError(error.message || "Error desconocido al actualizar la habitación.");
+      setError(error.message);
     } finally {
       setCargando(false);
     }
   };
 
+  if (cargando) {
+    return <div className="text-center mt-5">Cargando...</div>;
+  }
+
+  if (error) {
+    return <div className="text-center text-danger mt-5">Error: {error}</div>;
+  }
+
   return (
-    <div className="container">
-      <h1 className="text-center mb-4">Editar Habitación</h1>
-      {error && <div className="alert alert-danger">{error}</div>}
-      <form onSubmit={handleSubmit}>
-        <div className="form-group mb-3">
-          <label htmlFor="nombre">Nombre de la Habitación</label>
-          <input
-            type="text"
-            id="nombre"
-            value={nombre}
-            onChange={(e) => setNombre(e.target.value)}
-            className="form-control"
-            placeholder="Nombre de la habitación"
-            disabled={cargando}
-            required
-          />
-        </div>
-        <button type="submit" className="btn btn-primary w-100" disabled={cargando}>
-          {cargando ? "Guardando..." : "Actualizar Habitación"}
-        </button>
-      </form>
-      <div className="mt-3 text-center">
-        <button className="btn btn-secondary" onClick={() => navigate("/listaRoom")}>
-          Volver
-        </button>
+    <div className="container d-flex justify-content-center align-items-center" style={{ height: "80vh" }}>
+      <div className="card p-4" style={{ width: "300px" }}>
+        <h1 className="text-center mb-4">Editar Habitación</h1>
+        {error && <div className="alert alert-danger text-center">{error}</div>}
+        <form onSubmit={handleSubmit}>
+          <div className="mb-3">
+            <input
+              type="text"
+              value={nombre}
+              onChange={(e) => setNombre(e.target.value)}
+              className="form-control"
+              placeholder="Nombre"
+              required
+              disabled={cargando}
+            />
+          </div>
+          <div className="d-flex justify-content-center">
+            <button type="submit" className="btn btn-warning w-100" disabled={cargando}>
+              {cargando ? "Guardando..." : "Guardar Cambios"}
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   );

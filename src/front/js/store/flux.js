@@ -41,42 +41,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 				setStore({ auth: false });
 			},
 
-			loginUser: (email, password) => {
-				const requestOptions = {
-					method: "POST",
-					headers: { "Content-Type": "application/json" },
-					body: JSON.stringify({ email, password }),
-				};
-
-				return fetch(process.env.BACKEND_URL + "/api/loginUser", requestOptions)
-					.then(response => {
-						console.log(response.status)
-						if (response.status == 200) {
-							return response.json().then(data => {
-								localStorage.setItem("token", data.access_token);
-								setStore({ auth: true });
-								return true; // Exito
-							});
-						} else {
-							setStore({ auth: false });
-							return false; //fallo el login
-						}
-					})
-			},
-
-			signupUser: (username, email, password) => {
-				const requestOptions = {
-					method: "POST",
-					headers: { "Content-Type": "application/json" },
-					body: JSON.stringify({username, email, password })
-				};
-
-				fetch(process.env.BACKEND_URL + "/api/signupUser", requestOptions)
-					.then(response => response.text())
-					.then((result) => console.log(result))
-
-			},
-
 			login: (email, password) => {
 				const requestOptions = {
 					method: "POST",

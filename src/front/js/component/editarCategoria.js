@@ -34,7 +34,7 @@ const EditarCategoria = () => {
             setError("No se encontraron categorías.");
         }
     }, [id, store]);
-    
+
 
     // Manejar la actualización de la categoría
     const handleSubmit = async (e) => {
@@ -97,6 +97,7 @@ const EditarCategoria = () => {
                         </button>
                     </div>
                 </form>
+               
             </div>
         </div>
     );
