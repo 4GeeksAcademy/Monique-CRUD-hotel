@@ -15,17 +15,18 @@ const HouseKeeperTask = () => {
 
   const backendUrl = process.env.REACT_APP_BACKEND_URL || process.env.BACKEND_URL;
 
-  // Cargar todas las tareas de HouseKeeper
-  const loadHouseKeeperTasks = async () => {
+   const loadHouseKeeperTasks = async () => {
     try {
-      const response = await fetch(`${backendUrl}api/housekeeper_tasks`);
+      const response = await fetch(`${backendUrl}/api/housekeeper_tasks`);
       if (response.ok) {
         const data = await response.json();
         setHouseKeeperTasks(data);
       } else {
+        setErrorMessage('Error al obtener las tareas');
         console.error('Error al obtener las housekeeper tasks:', response.status);
       }
     } catch (error) {
+      setErrorMessage('Error al conectar con el servidor');
       console.error('Error al obtener las housekeeper tasks:', error);
     }
   };
@@ -34,22 +35,23 @@ const HouseKeeperTask = () => {
   const loadRoomsAndHousekeepers = async () => {
     try {
       const [roomsResponse, housekeepersResponse] = await Promise.all([
-        fetch(`${backendUrl}api/rooms`),
-        fetch(`${backendUrl}api/housekeepers`),
+        fetch(`${backendUrl}/api/rooms`),
+        fetch(`${backendUrl}/api/housekeepers`),
       ]);
-      
+
       if (roomsResponse.ok && housekeepersResponse.ok) {
         const roomsData = await roomsResponse.json();
         const housekeepersData = await housekeepersResponse.json();
         setRooms(roomsData);
         setHousekeepers(housekeepersData);
       } else {
-        console.error('Error al obtener las habitaciones o housekeepers:', roomsResponse.status, housekeepersResponse.status);
+        console.error("Error en la petición:", roomsResponse.status, housekeepersResponse.status);
       }
     } catch (error) {
-      console.error('Error al obtener habitaciones o housekeepers:', error);
+      console.error("Error al obtener habitaciones o housekeepers:", error);
     }
   };
+
 
   // Crear una nueva tarea de HouseKeeper
   const createHouseKeeperTask = async () => {

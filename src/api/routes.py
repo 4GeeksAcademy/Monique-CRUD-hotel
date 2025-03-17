@@ -12,6 +12,7 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from flask_jwt_extended import JWTManager
 from flask_jwt_extended import create_access_token
+from datetime import datetime
 
 # Blueprint para los endpoints de la API
 api = Blueprint('api', __name__)
@@ -805,6 +806,7 @@ def delete_maintenance_task(id):
         db.session.rollback()
 
         return jsonify({"message": "Error al eliminar la tarea de mantenimiento", "error": str(e)}), 400
+
 
 # @api.route('/rooms', methods=['GET'])
 # def get_all_rooms():

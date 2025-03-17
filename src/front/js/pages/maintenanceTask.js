@@ -35,30 +35,39 @@ const MaintenanceTask = () => {
   // Cargar las habitaciones, mantenimientos, housekeepers y categorías
   const loadOptions = async () => {
     try {
-      const [roomsResponse, maintenancesResponse, housekeepersResponse, categoriesResponse] = await Promise.all([
-        fetch(`${backendUrl}api/rooms`),
-        fetch(`${backendUrl}api/maintenance`),
-        fetch(`${backendUrl}api/housekeepers`),
-        fetch(`${backendUrl}api/categories`),
-      ]);
-
-      if (roomsResponse.ok && maintenancesResponse.ok && housekeepersResponse.ok && categoriesResponse.ok) {
-        const roomsData = await roomsResponse.json();
-        const maintenancesData = await maintenancesResponse.json();
-        const housekeepersData = await housekeepersResponse.json();
-        const categoriesData = await categoriesResponse.json();
-
-        setRooms(roomsData);
-        setMaintenances(maintenancesData);
-        setHousekeepers(housekeepersData);
-        setCategories(categoriesData);
-      } else {
-        console.error('Error al obtener las opciones:', roomsResponse.status);
+      const endpoints = ["rooms", "maintenance", "housekeepers", "categories"];
+      
+      const responses = await Promise.all(
+        endpoints.map(endpoint => fetch(`${backendUrl}/api/${endpoint}`))
+      );
+  
+      // Verificar si todas las respuestas son exitosas
+      const hasError = responses.some(response => !response.ok);
+      if (hasError) {
+        responses.forEach((response, index) => {
+          if (!response.ok) {
+            console.error(`Error al obtener ${endpoints[index]}:`, response.status);
+          }
+        });
+        return;
       }
+  
+      // Parsear JSON de todas las respuestas
+      const [roomsData, maintenancesData, housekeepersData, categoriesData] = await Promise.all(
+        responses.map(response => response.json())
+      );
+  
+      // Actualizar el estado
+      setRooms(roomsData);
+      setMaintenances(maintenancesData);
+      setHousekeepers(housekeepersData);
+      setCategories(categoriesData);
+  
     } catch (error) {
-      console.error('Error al obtener las opciones:', error);
+      console.error("Error al obtener las opciones:", error);
     }
   };
+  
 
   // Crear una nueva tarea de mantenimiento
   const createMaintenanceTask = async () => {
@@ -360,11 +369,6 @@ const MaintenanceTask = () => {
           ))}
         </tbody>
       </table>
-      <div className="d-flex justify-content-center align-items-center mt-4">
-        <button className="btn btn-secondary" onClick={() => navigate("/privateHotel")}>
-          Volver
-        </button>
-      </div>
     </div>
   );
 };
