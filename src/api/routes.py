@@ -12,7 +12,7 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from flask_jwt_extended import JWTManager
 from flask_jwt_extended import create_access_token
-from datetime import datetime
+# from datetime import datetime
 
 # Blueprint para los endpoints de la API
 api = Blueprint('api', __name__)
@@ -378,7 +378,8 @@ def crear_room():
         return jsonify({"error": "El nombre de la habitación es obligatorio"}), 400
 
     # Verificar si la habitacion ya existe
-    existing_room = Room.query.filter_by(nombre=data["nombre"]).first()
+    print(data)
+    existing_room = Room.query.filter_by(nombre=data["nombre"]).filter_by(branch_id=data["branchId"]).first()
     if existing_room:
         return jsonify({"error": "Habitación con este nombre ya existe"}), 400
     # Crear nueva habitacion
@@ -418,7 +419,10 @@ def actualizar_room(id):
     if not data.get("nombre"):
         return jsonify({"error": "El nombre de la habitación es obligatorio"}), 400
 
-    room.nombre = data.get("nombre", room.nombre)  # Actualizar el nombre
+    # Actualizar los campos de la habitación
+    room.nombre = data.get("nombre", room.nombre)
+    room.sucursal_id = data.get("sucursal_id", room.sucursal_id)  # Actualizar la sucursal si se pasa
+
     db.session.commit()
 
     return jsonify(room.serialize()), 200  # Código 200 para solicitud exitosa
@@ -732,17 +736,16 @@ def get_maintenance_task(id):
 
 @api.route('/maintenancetasks', methods=['POST'])
 def create_maintenance_task():
-    """Crear una nueva tarea de mantenimiento"""
     data = request.get_json()
 
     try:
         nombre = data.get('nombre')
-        photo = data.get('photo')
-        condition = data.get('condition')
-        room_id = data.get('room_id')
-        maintenance_id = data.get('maintenance_id')
-        housekeeper_id = data.get('housekeeper_id')
-        category_id = data.get('category_id')
+        photo = data.get('photo', None)
+        condition = data.get('condition', None)
+        room_id = data.get('room_id', None)
+        maintenance_id = data.get('maintenance_id', None)
+        housekeeper_id = data.get('housekeeper_id', None)
+        category_id = data.get('category_id', None)
 
         new_task = MaintenanceTask(
             nombre=nombre,

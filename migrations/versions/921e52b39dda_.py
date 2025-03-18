@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: 5e42c25ac48d
+Revision ID: 921e52b39dda
 Revises: 
-Create Date: 2025-03-17 13:37:28.412755
+Create Date: 2025-03-17 18:54:02.450392
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '5e42c25ac48d'
+revision = '921e52b39dda'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -102,22 +102,20 @@ def upgrade():
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('nombre', sa.String(length=120), nullable=False),
     sa.Column('photo', sa.String(length=120), nullable=False),
-    sa.Column('condition', sa.String(length=80), nullable=False),
+    sa.Column('status', sa.String(length=80), nullable=False),
     sa.Column('assignment_date', sa.String(length=80), nullable=False),
     sa.Column('submission_date', sa.String(length=80), nullable=False),
     sa.Column('id_room', sa.Integer(), nullable=True),
     sa.Column('id_housekeeper', sa.Integer(), nullable=True),
     sa.ForeignKeyConstraint(['id_housekeeper'], ['housekeeper.id'], ),
     sa.ForeignKeyConstraint(['id_room'], ['room.id'], ),
-    sa.PrimaryKeyConstraint('id'),
-    sa.UniqueConstraint('nombre'),
-    sa.UniqueConstraint('photo')
+    sa.PrimaryKeyConstraint('id')
     )
     op.create_table('maintenancetask',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('nombre', sa.String(length=120), nullable=False),
     sa.Column('photo', sa.String(length=255), nullable=True),
-    sa.Column('condition', sa.String(length=120), nullable=True),
+    sa.Column('status', sa.String(length=120), nullable=True),
     sa.Column('room_id', sa.Integer(), nullable=False),
     sa.Column('maintenance_id', sa.Integer(), nullable=False),
     sa.Column('housekeeper_id', sa.Integer(), nullable=False),
@@ -126,8 +124,7 @@ def upgrade():
     sa.ForeignKeyConstraint(['housekeeper_id'], ['housekeeper.id'], ),
     sa.ForeignKeyConstraint(['maintenance_id'], ['maintenance.id'], ),
     sa.ForeignKeyConstraint(['room_id'], ['room.id'], ),
-    sa.PrimaryKeyConstraint('id'),
-    sa.UniqueConstraint('nombre')
+    sa.PrimaryKeyConstraint('id')
     )
     # ### end Alembic commands ###
 

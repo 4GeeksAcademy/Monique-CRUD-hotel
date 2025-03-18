@@ -31,7 +31,6 @@ import SignupHotel from "./pages/signupHotel";
 import PrivateHotel from "./pages/privateHotel";
 import AuthHotel from "./component/authhotel";
 import MaintenanceTask from './pages/maintenanceTask';
-
 import LoginMaintenance from "./pages/loginMaintenance";
 import PrivateMaintenance from './pages/privateMaintenance';
 import ProtectedPrivateMaintenance from './pages/ProtectedPrivateMaintenance';

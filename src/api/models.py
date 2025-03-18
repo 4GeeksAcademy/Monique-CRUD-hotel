@@ -182,11 +182,11 @@ class HouseKeeper(db.Model):
 class HouseKeeperTask(db.Model):
     __tablename__ = 'housekeepertask'
     id = db.Column(db.Integer, primary_key=True)
-    nombre = db.Column(db.String(120), unique=True, nullable=False)
-    photo = db.Column(db.String(120), unique=True, nullable=False)
-    condition = db.Column(db.String(80), unique=False, nullable=False)
-    assignment_date = db.Column(db.String(80), unique=False, nullable=False)
-    submission_date = db.Column(db.String(80), unique=False, nullable=False)
+    nombre = db.Column(db.String(120), nullable=False)
+    photo = db.Column(db.String(120), nullable=False)
+    condition = db.Column(db.String(80), nullable=False)
+    assignment_date = db.Column(db.String(80), nullable=False)
+    submission_date = db.Column(db.String(80), nullable=False)
     id_room = db.Column(db.Integer, db.ForeignKey('room.id'), nullable=True)
     id_housekeeper = db.Column(db.Integer, db.ForeignKey('housekeeper.id'), nullable=True)
 
@@ -205,19 +205,20 @@ class HouseKeeperTask(db.Model):
             "assignment_date": self.assignment_date,
             "submission_date": self.submission_date,
             "id_room": self.id_room,
+            "room_nombre": self.room.nombre if self.room else None,
             "id_housekeeper": self.id_housekeeper,
         }
     
 class MaintenanceTask(db.Model):
     __tablename__ = 'maintenancetask'
     id = db.Column(db.Integer, primary_key=True)
-    nombre = db.Column(db.String(120), unique=True, nullable=False)
+    nombre = db.Column(db.String(120), nullable=False)
     photo = db.Column(db.String(255), nullable=True)
     condition = db.Column(db.String(120), nullable=True)
-    room_id = db.Column(db.Integer, db.ForeignKey('room.id'), nullable=False)
-    maintenance_id = db.Column(db.Integer, db.ForeignKey('maintenance.id'), nullable=False)
-    housekeeper_id = db.Column(db.Integer, db.ForeignKey('housekeeper.id'), nullable=False)
-    category_id = db.Column(db.Integer, db.ForeignKey('category.id'), nullable=False)
+    room_id = db.Column(db.Integer, db.ForeignKey('room.id'), nullable=True)  # Cambiar a nullable=True
+    maintenance_id = db.Column(db.Integer, db.ForeignKey('maintenance.id'), nullable=True)  # Cambiar a nullable=True
+    housekeeper_id = db.Column(db.Integer, db.ForeignKey('housekeeper.id'), nullable=True)  # Cambiar a nullable=True
+    category_id = db.Column(db.Integer, db.ForeignKey('category.id'), nullable=True)  # Cambiar a nullable=True
 
     # Relaciones
     room = db.relationship('Room')
@@ -232,8 +233,6 @@ class MaintenanceTask(db.Model):
         return {
             "id": self.id,
             "nombre": self.nombre,
-            # "branch_id": self.branch_id
-        # }
             "photo": self.photo,
             "condition": self.condition,
             "room": self.room.serialize() if self.room else None,  # Detalles de la habitación
