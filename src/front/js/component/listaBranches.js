@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import AutocompleteWithMap from "./autoComplete";
+import { Link } from "react-router-dom";
 
 
 const Branches = () => {
@@ -30,6 +31,11 @@ const Branches = () => {
       })
       .catch((error) => console.error("Error al obtener Hoteles:", error));
   }, []);
+
+  const handleLogout = () => {
+    actions.logout();
+    navigate("/authhotel");
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -94,106 +100,143 @@ const Branches = () => {
   };
 
   return (
-    <div className="container">
-      <h2 className="text-center my-3">Branches</h2>
+    <>
+      {/* Navbar */}
+      <nav className="navbar navbar-expand-lg navbar-light" style={{ backgroundColor: "#9b5de5" }}>
+        <div className="container-fluid">
+          <Link className="navbar-brand text-white fs-2" to="/">APIHOTEL</Link>
+          <button className="btn btn-light mt-3" onClick={handleLogout}>Logout</button>
+        </div>
+      </nav>
+      <div className="d-flex">
+        {/* Sidebar */}
+        <div className="sidebar" style={{ width: "250px", backgroundColor: "#9b5de5", minHeight: "100vh" }}>
+          <div className="d-flex flex-column align-items-start p-3">
+            <h4 className="text-white mb-4">Hotel Dashboard</h4>
+            <Link className="nav-link text-white" to="/listaHoteles">Go to Hoteles</Link>
+            <Link className="nav-link text-white" to="/listaBranches">Go to Branches</Link>
+            <Link className="nav-link text-white" to="/theme">Go to Theme Form</Link>
+            <Link className="nav-link text-white" to="/listaCat">Go to Category Form</Link>
+            <Link className="nav-link text-white" to="/hoteltheme">Go to Hotel Theme Form</Link>
+            <Link className="nav-link text-white" to="/listaRooms">Go to Room</Link>
+            <Link className="nav-link text-white" to="/ListaMaintenance">Go to Maintenance</Link>
+            <Link className="nav-link text-white" to="/houseKeeper">Go to HouseKeeper Form</Link>
+            <Link className="nav-link text-white" to="/HouseKeeperTask">Go to House Keeper Task Form</Link>
+            <Link className="nav-link text-white" to="/maintenanceTask">Go to Maintenance Task Form</Link>
 
-      <div className="d-flex justify-content-center align-items-center mb-4">
-        <button
-          className="btn btn-primary"
-          onClick={() => {
-            setBranchSeleccionado(null);
-            setNombre("");
-            setDireccion("");
-            setLongitud("");
-            setLatitud("");
-            setHotelId("");
-            setMostrarFormulario(true);
-          }}
-        >
-          Crear Branch
-        </button>
-      </div>
-
-      <div className="row bg-light p-2 fw-bold border-bottom">
-        <div className="col">Nombre</div>
-        <div className="col">Dirección</div>
-        <div className="col">Longitud</div>
-        <div className="col">Latitud</div>
-        <div className="col">Hotel</div>
-        <div className="col text-center">Acciones</div>
-      </div>
-
-      {branches.map((branch) => (
-        <div key={branch.id} className="row p-2 border-bottom align-items-center">
-          <div className="col">{branch.nombre}</div>
-          <div className="col">{branch.direccion}</div>
-          <div className="col">{branch.longitud}</div>
-          <div className="col">{branch.latitud}</div>
-          <div className="col">
-            {hoteles.find((hotel) => hotel.id === branch.hotel_id)?.nombre || "No asignado"}
-          </div>
-          <div className="col d-flex justify-content-center">
-            <button
-              className="btn btn-warning me-2"
-              onClick={() => {
-                setBranchSeleccionado(branch);
-                setNombre(branch.nombre);
-                setDireccion(branch.direccion);
-                setLongitud(branch.longitud);
-                setLatitud(branch.latitud);
-                setHotelId(branch.hotel_id);
-                setMostrarFormulario(true);
-              }}
-            >
-              Editar
-            </button>
-            <button className="btn btn-danger" onClick={() => eliminarBranch(branch.id)}>
-              Eliminar
-            </button>
           </div>
         </div>
-      ))}
 
-      {mostrarFormulario && (
-        <div className="card p-4 mt-5">
-          <h3 className="text-center mb-4">{branchSeleccionado ? "Editar Branch" : "Crear Branch"}</h3>
-          <form onSubmit={handleSubmit}>
-            <input type="text" value={nombre} onChange={(e) => setNombre(e.target.value)} className="form-control mb-3" placeholder="Nombre Sucursal" required />
-            <select
-              value={hotelId}
-              onChange={(e) => setHotelId(e.target.value)}
-              className="form-control mb-3"
-              required
-            >
-              <option value="">Seleccionar Hotel</option>
-              {hoteles.map((hotel) => (
-                <option key={hotel.id} value={hotel.id}>
-                  {hotel.nombre}
-                </option>
-              ))}
-            </select>
-            <AutocompleteWithMap
-              value={direccion}
-              onChange={setDireccion}
-              onSelect={setDireccion}
-              onLatLngChange={handleLatLngChange} // Pasa las coordenadas
-            />
+        {/* Main Content */}
+        <div className="main-content flex-fill p-4">
+          {/* Texto centrado */}
+          <div className="text-center">
+          
+              <div className="container">
+                <h2 className="text-center my-3">Branches</h2>
 
-            <input type="number" value={longitud} onChange={(e) => setLongitud(e.target.value)} className="form-control mb-3" placeholder="Longitud" required />
-            <input type="number" value={latitud} onChange={(e) => setLatitud(e.target.value)} className="form-control mb-3" placeholder="Latitud" required />
+                <div className="d-flex justify-content-center align-items-center mb-4">
+                  <button
+                    className="btn" style={{ backgroundColor: "#ac85eb", borderColor: "#B7A7D1" }}
+                    onClick={() => {
+                      setBranchSeleccionado(null);
+                      setNombre("");
+                      setDireccion("");
+                      setLongitud("");
+                      setLatitud("");
+                      setHotelId("");
+                      setMostrarFormulario(true);
+                    }}
+                  >
+                    Crear Branch
+                  </button>
+                </div>
 
-            <button type="submit" className="btn btn-primary w-100">
-              {branchSeleccionado ? "Guardar Cambios" : "Crear Branch"}
-            </button>
-          </form>
+                <div className="row bg-light p-2 fw-bold border-bottom">
+                  <div className="col">Nombre</div>
+                  <div className="col">Dirección</div>
+                  <div className="col">Longitud</div>
+                  <div className="col">Latitud</div>
+                  <div className="col">Hotel</div>
+                  <div className="col text-center">Acciones</div>
+                </div>
+
+                {branches.map((branch) => (
+                  <div key={branch.id} className="row p-2 border-bottom align-items-center">
+                    <div className="col">{branch.nombre}</div>
+                    <div className="col">{branch.direccion}</div>
+                    <div className="col">{branch.longitud}</div>
+                    <div className="col">{branch.latitud}</div>
+                    <div className="col">
+                      {hoteles.find((hotel) => hotel.id === branch.hotel_id)?.nombre || "No asignado"}
+                    </div>
+                    <div className="col d-flex justify-content-center">
+                      <button
+                        className="btn me-2" style={{ backgroundColor: "#ac85eb", borderColor: "#B7A7D1" }}
+                        onClick={() => {
+                          setBranchSeleccionado(branch);
+                          setNombre(branch.nombre);
+                          setDireccion(branch.direccion);
+                          setLongitud(branch.longitud);
+                          setLatitud(branch.latitud);
+                          setHotelId(branch.hotel_id);
+                          setMostrarFormulario(true);
+                        }}
+                      >
+                        Editar
+                      </button>
+                      <button className="btn" style={{ backgroundColor: "#ac85eb", borderColor: "#B7A7D1" }} onClick={() => eliminarBranch(branch.id)}>
+                        Eliminar
+                      </button>
+                    </div>
+                  </div>
+                ))}
+
+                {mostrarFormulario && (
+                  <div className="card p-4 mt-5">
+                    <h3 className="text-center mb-4">{branchSeleccionado ? "Editar Branch" : "Crear Branch"}</h3>
+                    <form onSubmit={handleSubmit}>
+                      <input type="text" value={nombre} onChange={(e) => setNombre(e.target.value)} className="form-control mb-3" placeholder="Nombre Sucursal" required />
+                      <select
+                        value={hotelId}
+                        onChange={(e) => setHotelId(e.target.value)}
+                        className="form-control mb-3"
+                        required
+                      >
+                        <option value="">Seleccionar Hotel</option>
+                        {hoteles.map((hotel) => (
+                          <option key={hotel.id} value={hotel.id}>
+                            {hotel.nombre}
+                          </option>
+                        ))}
+                      </select>
+                      <AutocompleteWithMap
+                        value={direccion}
+                        onChange={setDireccion}
+                        onSelect={setDireccion}
+                        onLatLngChange={handleLatLngChange} // Pasa las coordenadas
+                      />
+
+                      <input type="number" value={longitud} onChange={(e) => setLongitud(e.target.value)} className="form-control mb-3" placeholder="Longitud" required />
+                      <input type="number" value={latitud} onChange={(e) => setLatitud(e.target.value)} className="form-control mb-3" placeholder="Latitud" required />
+
+                      <button type="submit" className="btn btn-primary w-100">
+                        {branchSeleccionado ? "Guardar Cambios" : "Crear Branch"}
+                      </button>
+                    </form>
+                  </div>
+                )}
+                <div className="d-flex justify-content-center align-items-center mt-4">
+                  <button className="btn btn-secondary" onClick={() => navigate("/privateHotel")}>
+                    Volver
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-      )}
-      <div className="d-flex justify-content-center align-items-center mt-4">
-        <button className="btn btn-secondary" onClick={() => navigate("/privateHotel")}>
-          Volver
-        </button>
-      </div>
-    </div>
+      
+    </>
   );
 };
 

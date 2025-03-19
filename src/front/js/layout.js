@@ -12,7 +12,7 @@ import { Single } from "./pages/single";
 import { ListaCat } from "./pages/listaCat";
 import { ListaRooms} from   "./pages/listaRooms";
 import injectContext from "./store/appContext";
-import { Navbar } from "./component/navbar";
+
 import EditarCategoria from "./component/editarCategoria";
 import CrearCategoria from "./component/crearCategoria";
 import ListaCategoria from "./component/listaCategoria";
@@ -35,6 +35,7 @@ import LoginMaintenance from "./pages/loginMaintenance";
 import PrivateMaintenance from './pages/privateMaintenance';
 import ProtectedPrivateMaintenance from './pages/ProtectedPrivateMaintenance';
 
+
 const Layout = () => {
     // Basename: Usado si el proyecto está en un subdirectorio, configurado en .env
     const basename = process.env.BASENAME || "";
@@ -47,7 +48,7 @@ const Layout = () => {
         <div>
             <BrowserRouter basename={basename}>
                 <ScrollToTop>
-                    <Navbar />
+              
                     <Routes>
                         <Route element={<Home />} path="/"/>
                         <Route element={<ListaCat />} path="/listaCat"/>
@@ -75,10 +76,8 @@ const Layout = () => {
                         <Route element={<LoginHotel />} path="/loginHotel" />
                         <Route element={<AuthHotel />} path="/authhotel" />
                         <Route element={<MaintenanceTask />} path="/maintenanceTask" />
-
                         <Route element={<LoginMaintenance />} path="/loginMaintenance" />
                         <Route element={<ProtectedPrivateMaintenance><PrivateMaintenance /></ProtectedPrivateMaintenance>} path="/privateMaintenance" />
-
                         <Route element={<h1>Not found!</h1>} />
                     </Routes>
                 </ScrollToTop>

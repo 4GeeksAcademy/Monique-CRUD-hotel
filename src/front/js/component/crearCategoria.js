@@ -97,14 +97,19 @@ const CrearCategoria = () => {
                         />
                     </div>
                     <div className="d-flex justify-content-center">
-                        <button type="submit" className="btn btn-primary w-100" disabled={cargando}>
+                        <button type="submit" className="btn w-100" style={{ backgroundColor: "#ac85eb", borderColor: "#B7A7D1" }} disabled={cargando}>
                             {cargando ? "Creando..." : "Crear Categoría"}
                         </button>
                     </div>
                 </form>
-                
+                <div className="d-flex justify-content-center align-items-center mt-4">
+                    <button className="btn" style={{ backgroundColor: "#ac85eb", borderColor: "#B7A7D1" }} onClick={() => navigate("/privateHotel")}>
+                        Volver
+                    </button>
+                </div>
+
             </div>
-            
+
         </div>
     );
 };

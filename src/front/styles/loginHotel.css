@@ -1,0 +1,10 @@
+
+/* En tu archivo CSS */
+.custom-link {
+    color: #7a45ce; /* Color lilas o el que desees */
+    text-decoration: none; /* Elimina el subrayado */
+}
+
+.custom-link:hover {
+    color: #5e2dad; /* Tono más oscuro para el hover */
+}

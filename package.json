@@ -73,12 +73,15 @@
 		]
 	},
 	"dependencies": {
+		"@cloudinary/url-gen": "^1.21.0",
 		"@react-google-maps/api": "^2.20.6",
 		"axios": "^1.8.3",
 		"bcryptjs": "^3.0.2",
 		"bootstrap": "^5.3.3",
+		"cloudinary": "^2.6.0",
 		"cors": "^2.8.5",
 		"jsonwebtoken": "^9.0.2",
+		"jwt-decode": "^4.0.0",
 		"prop-types": "^15.6.1",
 		"react": "^16.8.4",
 		"react-bootstrap": "^2.10.9",

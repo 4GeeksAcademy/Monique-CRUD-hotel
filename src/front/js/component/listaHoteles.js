@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 const Hoteles = () => {
   const [hoteles, setHoteles] = useState([]);
@@ -18,6 +19,11 @@ const Hoteles = () => {
       .then((data) => setHoteles(data))
       .catch((error) => console.error("Error al obtener hoteles:", error));
   }, []); // solo se ejecuta una vez al montar el componente
+
+  const handleLogout = () => {
+    actions.logout();
+    navigate("/authhotel");
+  };
 
   // Manejar el envío del formulario (crear o editar)
   const handleSubmit = (e) => {
@@ -93,13 +99,45 @@ const Hoteles = () => {
   };
 
   return (
+    <>
+          {/* Navbar */}
+          <nav className="navbar navbar-expand-lg navbar-light" style={{ backgroundColor: "#9b5de5" }}>
+            <div className="container-fluid">
+              <Link className="navbar-brand text-white fs-2" to="/">APIHOTEL</Link>
+              <button className="btn btn-light mt-3" onClick={handleLogout}>Logout</button>
+            </div>
+          </nav>
+          <div className="d-flex">
+            {/* Sidebar */}
+            <div className="sidebar" style={{ width: "250px", backgroundColor: "#9b5de5", minHeight: "100vh" }}>
+              <div className="d-flex flex-column align-items-start p-3">
+                <h4 className="text-white mb-4">Hotel Dashboard</h4>
+                <Link className="nav-link text-white" to="/listaHoteles">Go to Hoteles</Link>
+                <Link className="nav-link text-white" to="/listaBranches">Go to Branches</Link>
+                <Link className="nav-link text-white" to="/theme">Go to Theme Form</Link>
+                <Link className="nav-link text-white" to="/listaCat">Go to Category Form</Link>
+                <Link className="nav-link text-white" to="/hoteltheme">Go to Hotel Theme Form</Link>
+                <Link className="nav-link text-white" to="/listaRooms">Go to Room</Link>
+                <Link className="nav-link text-white" to="/ListaMaintenance">Go to Maintenance</Link>
+                <Link className="nav-link text-white" to="/houseKeeper">Go to HouseKeeper Form</Link>
+                <Link className="nav-link text-white" to="/HouseKeeperTask">Go to House Keeper Task Form</Link>
+                <Link className="nav-link text-white" to="/maintenanceTask">Go to Maintenance Task Form</Link>
+    
+              </div>
+            </div>
+    
+            {/* Main Content */}
+            <div className="main-content flex-fill p-4">
+              {/* Texto centrado */}
+              <div className="text-center">
+                
     <div className="container">
       <h2 className="text-center my-3">Hoteles</h2>
 
       {/* Botón para crear hotel */}
       <div className="d-flex justify-content-center align-items-center mb-4">
         <button
-          className="btn btn-primary"
+          className="btn" style={{ backgroundColor: "#ac85eb", borderColor: "#B7A7D1" }}
           onClick={() => {
             setHotelSeleccionado(null); // Limpiar selección
             setNombre("");
@@ -125,7 +163,7 @@ const Hoteles = () => {
           <div className="col">{hotel.email}</div>
           <div className="col d-flex justify-content-center">
             <button
-              className="btn btn-warning me-5"
+              className="btn me-5" style={{ backgroundColor: "#ac85eb", borderColor: "#B7A7D1" }}
               onClick={() => {
                 setHotelSeleccionado(hotel); // Establecer el hotel seleccionado
                 setNombre(hotel.nombre);
@@ -137,7 +175,7 @@ const Hoteles = () => {
               Editar
             </button>
             <button
-              className="btn btn-danger"
+              className="btn" style={{ backgroundColor: "#ac85eb", borderColor: "#B7A7D1" }}
               onClick={() => eliminarHotel(hotel.id)}
             >
               Eliminar
@@ -178,6 +216,10 @@ const Hoteles = () => {
         </button>
       </div>
     </div>
+    </div>
+    </div>
+    </div>
+    </>
   );
 };
 

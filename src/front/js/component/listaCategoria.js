@@ -31,9 +31,9 @@ const ListaCategoria = () => {
             setError(null);
 
             try {
-                const response = await fetch(`${apiUrl}api/categories`,{
-                method: "GET",
-                headers: { "Content-Type": "application/json" }
+                const response = await fetch(`${apiUrl}api/categories`, {
+                    method: "GET",
+                    headers: { "Content-Type": "application/json" }
                 })
                 if (!response.ok) {
                     throw new Error("Error al cargar las categorías");
@@ -79,13 +79,14 @@ const ListaCategoria = () => {
             setEliminando(null);
         }
     }, []);
-    
+
     return (
+
         <div className="container">
-                            <div className="d-flex justify-content-between mt-3">
-                    <Link to="/listaCat" className="btn btn-primary">Lista de Categorías</Link>
-                    <Link to="/crearCategoria" className="btn btn-success">Crear Categoría</Link>
-                </div>
+            <div className="d-flex justify-content-between mt-3">
+                
+                <Link to="/crearCategoria" className="btn" style={{ backgroundColor: "#ac85eb", borderColor: "#B7A7D1" }}>Crear Categoría</Link>
+            </div>
             <h2 className="text-center my-3">Lista de Categorías</h2>
             {(
                 <>
@@ -98,10 +99,10 @@ const ListaCategoria = () => {
                             <div className="col">{category.nombre}</div>
                             <div className="col d-flex justify-content-center">
                                 <Link to={`/editar/${category.id}`}>
-                                    <button className="btn btn-warning me-3">Editar</button>
+                                    <button className="btn me-3" style={{ backgroundColor: "#ac85eb", borderColor: "#B7A7D1" }}>Editar</button>
                                 </Link>
                                 <button
-                                    className="btn btn-danger"
+                                    className="btn" style={{ backgroundColor: "#ac85eb", borderColor: "#B7A7D1" }}
                                     onClick={() => eliminarCategoria(category.id)}
                                     disabled={eliminando === category.id}
                                 >
@@ -112,12 +113,13 @@ const ListaCategoria = () => {
                     ))}
                 </>
             )}
-             <div className="d-flex justify-content-center align-items-center mt-4">
-                <button className="btn btn-secondary" onClick={() => navigate("/privateHotel")}>
+            <div className="d-flex justify-content-center align-items-center mt-4">
+                <button className="btn" style={{ backgroundColor: "#ac85eb", borderColor: "#B7A7D1" }} onClick={() => navigate("/privateHotel")}>
                     Volver
                 </button>
             </div>
         </div>
+
     );
 };
 

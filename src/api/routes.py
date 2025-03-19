@@ -419,10 +419,7 @@ def actualizar_room(id):
     if not data.get("nombre"):
         return jsonify({"error": "El nombre de la habitación es obligatorio"}), 400
 
-    # Actualizar los campos de la habitación
-    room.nombre = data.get("nombre", room.nombre)
-    room.sucursal_id = data.get("sucursal_id", room.sucursal_id)  # Actualizar la sucursal si se pasa
-
+    room.nombre = data.get("nombre", room.nombre)  # Actualizar el nombre
     db.session.commit()
 
     return jsonify(room.serialize()), 200  # Código 200 para solicitud exitosa

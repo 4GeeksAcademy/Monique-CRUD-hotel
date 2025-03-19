@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from "react-router-dom";
 
 const HouseKeeperTask = () => {
   const [houseKeeperTasks, setHouseKeeperTasks] = useState([]);
@@ -15,7 +16,7 @@ const HouseKeeperTask = () => {
 
   const backendUrl = process.env.REACT_APP_BACKEND_URL || process.env.BACKEND_URL;
 
-   const loadHouseKeeperTasks = async () => {
+  const loadHouseKeeperTasks = async () => {
     try {
       const response = await fetch(`${backendUrl}/api/housekeeper_tasks`);
       if (response.ok) {
@@ -52,6 +53,10 @@ const HouseKeeperTask = () => {
     }
   };
 
+  const handleLogout = () => {
+    actions.logout();
+    navigate("/authhotel");
+  };
 
   // Crear una nueva tarea de HouseKeeper
   const createHouseKeeperTask = async () => {
@@ -60,7 +65,7 @@ const HouseKeeperTask = () => {
       alert('Por favor, completa todos los campos');
       return;
     }
-  
+
     try {
       const response = await fetch(`${backendUrl}/api/housekeeper_task`, {
         method: 'POST',
@@ -77,7 +82,7 @@ const HouseKeeperTask = () => {
           id_housekeeper: idHousekeeper,
         }),
       });
-  
+
       // Verificación de respuesta exitosa
       if (response.ok) {
         const data = await response.json();  // Obtenemos la respuesta en formato JSON
@@ -92,7 +97,7 @@ const HouseKeeperTask = () => {
       console.error('Error al crear la tarea de HouseKeeper:', error);
     }
   };
-  
+
 
   // Actualizar una tarea de HouseKeeper
   const updateHouseKeeperTask = async () => {
@@ -196,169 +201,199 @@ const HouseKeeperTask = () => {
   };
 
   return (
-    <div className="container">
-      <h1>Gestión de Tareas de HouseKeeper</h1>
-
-      <div className="card">
-        <div className="card-body">
-          <h5 className="card-title">{editingId ? 'Editar' : 'Crear'} Tarea de HouseKeeper</h5>
-
-          <form>
-            <div className="form-group">
-              <label htmlFor="nombre">Nombre</label>
-              <input
-                type="text"
-                className="form-control"
-                id="nombre"
-                value={nombre}
-                onChange={(e) => setNombre(e.target.value)}
-              />
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="photo">Foto</label>
-              <input
-                type="text"
-                className="form-control"
-                id="photo"
-                value={photo}
-                onChange={(e) => setPhoto(e.target.value)}
-              />
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="condition">Condición</label>
-              <input
-                type="text"
-                className="form-control"
-                id="condition"
-                value={condition}
-                onChange={(e) => setCondition(e.target.value)}
-              />
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="assignmentDate">Fecha de Asignación</label>
-              <input
-                type="date"
-                className="form-control"
-                id="assignmentDate"
-                value={assignmentDate}
-                onChange={(e) => setAssignmentDate(e.target.value)}
-              />
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="submissionDate">Fecha de Entrega</label>
-              <input
-                type="date"
-                className="form-control"
-                id="submissionDate"
-                value={submissionDate}
-                onChange={(e) => setSubmissionDate(e.target.value)}
-              />
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="idRoom">Habitación</label>
-              <select
-                className="form-control"
-                id="idRoom"
-                value={idRoom}
-                onChange={(e) => setIdRoom(e.target.value)}
-              >
-                <option value="">Selecciona una habitación</option>
-                {rooms.map((room) => (
-                  <option key={room.id} value={room.id}>
-                    {room.nombre}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="idHousekeeper">HouseKeeper</label>
-              <select
-                className="form-control"
-                id="idHousekeeper"
-                value={idHousekeeper}
-                onChange={(e) => setIdHousekeeper(e.target.value)}
-              >
-                <option value="">Selecciona un HouseKeeper</option>
-                {housekeepers.map((housekeeper) => (
-                  <option key={housekeeper.id} value={housekeeper.id}>
-                    {housekeeper.nombre}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div className="form-group">
-              <button
-                type="button"
-                className="btn btn-primary"
-                onClick={editingId ? updateHouseKeeperTask : createHouseKeeperTask}
-              >
-                {editingId ? 'Actualizar' : 'Crear'} Tarea de HouseKeeper
-              </button>
-
-              {editingId && (
-                <button
-                  type="button"
-                  className="btn btn-secondary ml-2"
-                  onClick={cancelEdit}
-                >
-                  Cancelar
-                </button>
-              )}
-            </div>
-          </form>
+    <>
+      {/* Navbar */}
+      <nav className="navbar navbar-expand-lg navbar-light" style={{ backgroundColor: "#9b5de5" }}>
+        <div className="container-fluid">
+          <Link className="navbar-brand text-white fs-2" to="/">APIHOTEL</Link>
+          <button className="btn btn-light mt-3" onClick={handleLogout}>Logout</button>
         </div>
-      </div>
+      </nav>
+      <div className="d-flex">
+        {/* Sidebar */}
+        <div className="sidebar" style={{ width: "250px", backgroundColor: "#9b5de5", minHeight: "100vh" }}>
+          <div className="d-flex flex-column align-items-start p-3">
+            <h4 className="text-white mb-4">Hotel Dashboard</h4>
+            <Link className="nav-link text-white" to="/listaHoteles">Go to Hoteles</Link>
+            <Link className="nav-link text-white" to="/listaBranches">Go to Branches</Link>
+            <Link className="nav-link text-white" to="/theme">Go to Theme Form</Link>
+            <Link className="nav-link text-white" to="/listaCat">Go to Category Form</Link>
+            <Link className="nav-link text-white" to="/hoteltheme">Go to Hotel Theme Form</Link>
+            <Link className="nav-link text-white" to="/listaRooms">Go to Room</Link>
+            <Link className="nav-link text-white" to="/ListaMaintenance">Go to Maintenance</Link>
+            <Link className="nav-link text-white" to="/houseKeeper">Go to HouseKeeper Form</Link>
+            <Link className="nav-link text-white" to="/HouseKeeperTask">Go to House Keeper Task Form</Link>
+            <Link className="nav-link text-white" to="/maintenanceTask">Go to Maintenance Task Form</Link>
 
-      <h3 className="mt-4">Tareas de HouseKeeper</h3>
-      <div className="table-responsive mt-4">
-        <table className="table table-striped">
-          <thead>
-            <tr>
-              <th>Nombre</th>
-              <th>Condición</th>
-              <th>Asignación</th>
-              <th>Entrega</th>
-              <th>ID de Habitación</th> {/* Nueva columna */}
-              <th>ID de Housekeeper</th> {/* Nueva columna */}
-              <th>Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            {houseKeeperTasks.map((task) => (
-              <tr key={task.id}>
-                <td>{task.nombre}</td>
-                <td>{task.condition}</td>
-                <td>{task.assignment_date}</td>
-                <td>{task.submission_date}</td>
-                <td>{task.id_room}</td> {/* Muestra el ID de la habitación */}
-                <td>{task.id_housekeeper}</td> {/* Muestra el ID de Housekeeper */}
-                <td>
-                  <button
-                    className="btn btn-primary btn-sm mr-2"
-                    onClick={() => editHouseKeeperTask(task.id)}
+          </div>
+        </div>
+
+        <div className="container">
+          <h1>Gestión de Tareas de HouseKeeper</h1>
+
+          <div className="card">
+            <div className="card-body">
+              <h5 className="card-title">{editingId ? 'Editar' : 'Crear'} Tarea de HouseKeeper</h5>
+
+              <form>
+                <div className="form-group">
+                  <label htmlFor="nombre">Nombre</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="nombre"
+                    value={nombre}
+                    onChange={(e) => setNombre(e.target.value)}
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="photo">Foto</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="photo"
+                    value={photo}
+                    onChange={(e) => setPhoto(e.target.value)}
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="condition">Condición</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="condition"
+                    value={condition}
+                    onChange={(e) => setCondition(e.target.value)}
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="assignmentDate">Fecha de Asignación</label>
+                  <input
+                    type="date"
+                    className="form-control"
+                    id="assignmentDate"
+                    value={assignmentDate}
+                    onChange={(e) => setAssignmentDate(e.target.value)}
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="submissionDate">Fecha de Entrega</label>
+                  <input
+                    type="date"
+                    className="form-control"
+                    id="submissionDate"
+                    value={submissionDate}
+                    onChange={(e) => setSubmissionDate(e.target.value)}
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="idRoom">Habitación</label>
+                  <select
+                    className="form-control"
+                    id="idRoom"
+                    value={idRoom}
+                    onChange={(e) => setIdRoom(e.target.value)}
                   >
-                    Editar
-                  </button>
-                  <button
-                    className="btn btn-secondary btn-sm"
-                    onClick={() => deleteHouseKeeperTask(task.id)}
+                    <option value="">Selecciona una habitación</option>
+                    {rooms.map((room) => (
+                      <option key={room.id} value={room.id}>
+                        {room.nombre}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="idHousekeeper">HouseKeeper</label>
+                  <select
+                    className="form-control"
+                    id="idHousekeeper"
+                    value={idHousekeeper}
+                    onChange={(e) => setIdHousekeeper(e.target.value)}
                   >
-                    Eliminar
+                    <option value="">Selecciona un HouseKeeper</option>
+                    {housekeepers.map((housekeeper) => (
+                      <option key={housekeeper.id} value={housekeeper.id}>
+                        {housekeeper.nombre}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="form-group">
+                  <button
+                    type="button"
+                    className="btn" style={{ backgroundColor: "#ac85eb", borderColor: "#B7A7D1" }}
+                    onClick={editingId ? updateHouseKeeperTask : createHouseKeeperTask}
+                  >
+                    {editingId ? 'Actualizar' : 'Crear'} Tarea de HouseKeeper
                   </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+
+                  {editingId && (
+                    <button
+                      type="button"
+                      className="btn btn-secondary ml-2"
+                      onClick={cancelEdit}
+                    >
+                      Cancelar
+                    </button>
+                  )}
+                </div>
+              </form>
+            </div>
+          </div>
+
+          <h3 className="mt-4">Tareas de HouseKeeper</h3>
+          <div className="table-responsive mt-4">
+            <table className="table table-striped">
+              <thead>
+                <tr>
+                  <th>Nombre</th>
+                  <th>Condición</th>
+                  <th>Asignación</th>
+                  <th>Entrega</th>
+                  <th>ID de Habitación</th> {/* Nueva columna */}
+                  <th>ID de Housekeeper</th> {/* Nueva columna */}
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                {houseKeeperTasks.map((task) => (
+                  <tr key={task.id}>
+                    <td>{task.nombre}</td>
+                    <td>{task.condition}</td>
+                    <td>{task.assignment_date}</td>
+                    <td>{task.submission_date}</td>
+                    <td>{task.id_room}</td> {/* Muestra el ID de la habitación */}
+                    <td>{task.id_housekeeper}</td> {/* Muestra el ID de Housekeeper */}
+                    <td>
+                      <button
+                        className="btn  btn-sm mr-2" style={{ backgroundColor: "#ac85eb", borderColor: "#B7A7D1" }}
+                        onClick={() => editHouseKeeperTask(task.id)}
+                      >
+                        Editar
+                      </button>
+                      <button
+                        className="btn btn-sm" style={{ backgroundColor: "#ac85eb", borderColor: "#B7A7D1" }}
+                        onClick={() => deleteHouseKeeperTask(task.id)}
+                      >
+                        Eliminar
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
       </div>
-    </div>
+    </>
   );
 };
 

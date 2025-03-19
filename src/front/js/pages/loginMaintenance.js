@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import { Link } from "react-router-dom"; // Importar Link
 
 const LoginMaintenance = () => {
   const [email, setEmail] = useState('');
@@ -38,37 +40,64 @@ const LoginMaintenance = () => {
   };
 
   return (
-    <div className="d-flex justify-content-center align-items-center min-vh-100 bg-light">
-      <div className="card p-4" style={{ maxWidth: '400px', width: '100%' }}>
-        <h1 className="text-center mb-4">Login Mantenimiento</h1>
-        <div className="mb-3">
-          <label htmlFor="email" className="form-label">Email</label>
-          <input
-            type="email"
-            id="email"
-            className="form-control"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="Ingrese su correo electrónico"
-          />
+     <>
+      {/* Navbar */}
+      <nav className="navbar navbar-expand-lg navbar-light" style={{ backgroundColor: "#9b5de5" }}>
+        <div className="container-fluid">
+          <Link className="navbar-brand text-white fs-2" to="/">APIHOTEL</Link>
+          <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span className="navbar-toggler-icon"></span>
+          </button>
+          <div className="collapse navbar-collapse" id="navbarNav">
+            <ul className="navbar-nav ms-auto">
+              <li className="nav-item">
+                <Link className="nav-link text-white fs-5" to="/">Home</Link>
+              </li>
+              <li className="nav-item">
+                <Link className="nav-link text-white fs-5" to="/authhotel">Hotel Login</Link>
+              </li>
+              <li className="nav-item">
+                <Link className="nav-link text-white fs-5" to="/loginHouseKeeper">Housekeeper Login</Link>
+              </li>
+              <li className="nav-item">
+                <Link className="nav-link text-white fs-5" to="/loginMaintenance">Maintenance Login</Link>
+              </li>
+            </ul>
+          </div>
         </div>
-        <div className="mb-3">
-          <label htmlFor="password" className="form-label">Contraseña</label>
-          <input
-            type="password"
-            id="password"
-            className="form-control"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="Ingrese su contraseña"
-          />
+      </nav>
+      <div className="d-flex justify-content-center align-items-center vh-90">
+        <div className="container" style={{ width: "500px" }}>
+          <h2 className="text-center mb-4 mt-5">Iniciar sesión</h2>
+          <div className="mb-3">
+            <label htmlFor="email" className="form-label">Email</label>
+            <input
+              type="email"
+              id="email"
+              className="form-control"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="Ingrese su correo electrónico"
+            />
+          </div>
+          <div className="mb-3">
+            <label htmlFor="password" className="form-label">Contraseña</label>
+            <input
+              type="password"
+              id="password"
+              className="form-control"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Ingrese su contraseña"
+            />
+          </div>
+          <button className="btn w-100" style={{ backgroundColor: "#ac85eb", borderColor: "#B7A7D1" }}onClick={handleLogin}>
+           Login
+          </button>
         </div>
-        <button className="btn btn-primary w-100" onClick={handleLogin}>
-          Iniciar sesión
-        </button>
       </div>
-    </div>
-  );
+      </>
+      );
 };
 
-export default LoginMaintenance;
+      export default LoginMaintenance;

@@ -7,8 +7,8 @@ const CrearRoom = () => {
     const [cargando, setCargando] = useState(false);
     const [error, setError] = useState(null);
     const navigate = useNavigate();
-            // Usamos useRef para mantener una referencia al estado de si el componente está montado o no
-            const isMounted = useRef(true); // Esto se utilizará para evitar actualizaciones en un componente desmontado     
+    // Usamos useRef para mantener una referencia al estado de si el componente está montado o no
+    const isMounted = useRef(true); // Esto se utilizará para evitar actualizaciones en un componente desmontado     
     // Función para obtener la URL del backend
     const getBackendUrl = () => {
         const baseUrl = process.env.BACKEND_URL;
@@ -23,9 +23,9 @@ const CrearRoom = () => {
     // Se ejecuta cuando el componente se desmonta
     useEffect(() => {
         fetch(process.env.BACKEND_URL + "/api/branches")  // Asegúrate de que esta URL es correcta
-        .then((response) => response.json())
-        .then((data) => setBranches(data))
-        .catch((error) => console.error("Error cargando branches:", error));
+            .then((response) => response.json())
+            .then((data) => setBranches(data))
+            .catch((error) => console.error("Error cargando branches:", error));
         // Cuando el componente se desmonta, se cambia la referencia a false
         isMounted.current = false;
         return () => {
@@ -54,13 +54,15 @@ const CrearRoom = () => {
                     "Content-Type": "application/json",
                     "Accept": "application/json"
                 },
-                body: JSON.stringify({      nombre: nombre.trim(),   
-                    branchId: Number(branchId) || null }),
+                body: JSON.stringify({
+                    nombre: nombre.trim(),
+                    branchId: Number(branchId) || null
+                }),
             });
 
-if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(errorData.message || "Error al actualizar la habitación.");f
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || "Error al actualizar la habitación."); f
             }
             const data = await response.json(); // Esto asume que la respuesta es JSON
             console.log("Habitación creada:", data);
@@ -92,29 +94,35 @@ if (!response.ok) {
                             required
                             disabled={cargando}
                         />
- <select 
-            value={branchId} 
-            onChange={(e) => setBranchId(e.target.value)} 
-            className="form-control mb-3" 
-            required
-        >
-            <option value="">Seleccionar Branch</option>
-            {branches.length > 0 ? (
-                branches.map((branch) => (
-                    <option key={branch.id} value={branch.id}>
-                        {branch.nombre}
-                    </option>
-                ))
-            ) : (
-                <option disabled>Cargando branches...</option>
-            )}
-        </select>
-        <button type="submit" className="btn btn-primary w-100">
-    {branchId ? "Guardar Cambios" : "Crear Room"}
-</button>
-    </div>
+                        <select
+                            value={branchId}
+                            onChange={(e) => setBranchId(e.target.value)}
+                            className="form-control mb-3"
+                            required
+                        >
+                            <option value="">Seleccionar Branch</option>
+                            {branches.length > 0 ? (
+                                branches.map((branch) => (
+                                    <option key={branch.id} value={branch.id}>
+                                        {branch.nombre}
+                                    </option>
+                                ))
+                            ) : (
+                                <option disabled>Cargando branches...</option>
+                            )}
+                        </select>
+                        <button type="submit" className="btn w-100" style={{ backgroundColor: "#ac85eb", borderColor: "#B7A7D1" }}>
+                            {branchId ? "Guardar Cambios" : "Crear Room"}
+                        </button>
+                    </div>
                 </form >
-            </div >
+                <div className="d-flex justify-content-center align-items-center mt-4">
+                    <button className="btn" style={{ backgroundColor: "#ac85eb", borderColor: "#B7A7D1" }} onClick={() => navigate("/privateHotel")}>
+                        Volver
+                    </button>
+                </div >
+            </div>
+
         </div >
     );
 };

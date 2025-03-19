@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: 921e52b39dda
+Revision ID: ab12dffd35b3
 Revises: 
-Create Date: 2025-03-17 18:54:02.450392
+Create Date: 2025-03-18 18:33:44.935432
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '921e52b39dda'
+revision = 'ab12dffd35b3'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -102,7 +102,7 @@ def upgrade():
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('nombre', sa.String(length=120), nullable=False),
     sa.Column('photo', sa.String(length=120), nullable=False),
-    sa.Column('status', sa.String(length=80), nullable=False),
+    sa.Column('condition', sa.String(length=80), nullable=False),
     sa.Column('assignment_date', sa.String(length=80), nullable=False),
     sa.Column('submission_date', sa.String(length=80), nullable=False),
     sa.Column('id_room', sa.Integer(), nullable=True),
@@ -115,11 +115,11 @@ def upgrade():
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('nombre', sa.String(length=120), nullable=False),
     sa.Column('photo', sa.String(length=255), nullable=True),
-    sa.Column('status', sa.String(length=120), nullable=True),
-    sa.Column('room_id', sa.Integer(), nullable=False),
-    sa.Column('maintenance_id', sa.Integer(), nullable=False),
-    sa.Column('housekeeper_id', sa.Integer(), nullable=False),
-    sa.Column('category_id', sa.Integer(), nullable=False),
+    sa.Column('condition', sa.String(length=120), nullable=True),
+    sa.Column('room_id', sa.Integer(), nullable=True),
+    sa.Column('maintenance_id', sa.Integer(), nullable=True),
+    sa.Column('housekeeper_id', sa.Integer(), nullable=True),
+    sa.Column('category_id', sa.Integer(), nullable=True),
     sa.ForeignKeyConstraint(['category_id'], ['category.id'], ),
     sa.ForeignKeyConstraint(['housekeeper_id'], ['housekeeper.id'], ),
     sa.ForeignKeyConstraint(['maintenance_id'], ['maintenance.id'], ),
