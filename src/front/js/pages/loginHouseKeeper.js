@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import { Link } from "react-router-dom"; // Importar Link
+import SidebarLogin from '../component/sidebarLogin';
 
 const LoginHouseKeeper = () => {
   const [email, setEmail] = useState('');
@@ -16,19 +15,11 @@ const LoginHouseKeeper = () => {
       return;
     }
 
-    console.log('Email:', email);
-    console.log('Password:', password);
-
     try {
       const response = await fetch(`${backendUrl}api/loginHouseKeeper`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          email: email,
-          password: password,
-        }),
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
       });
 
       if (response.ok) {
@@ -46,36 +37,15 @@ const LoginHouseKeeper = () => {
   };
 
   return (
-    <>
-      {/* Navbar */}
-      <nav className="navbar navbar-expand-lg navbar-light" style={{ backgroundColor: "#9b5de5" }}>
-        <div className="container-fluid">
-          <Link className="navbar-brand text-white fs-2" to="/">APIHOTEL</Link>
-          <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span className="navbar-toggler-icon"></span>
-          </button>
-          <div className="collapse navbar-collapse" id="navbarNav">
-            <ul className="navbar-nav ms-auto">
-              <li className="nav-item">
-                <Link className="nav-link text-white fs-5" to="/">Home</Link>
-              </li>
-              <li className="nav-item">
-                <Link className="nav-link text-white fs-5" to="/authhotel">Hotel Login</Link>
-              </li>
-              <li className="nav-item">
-                <Link className="nav-link text-white fs-5" to="/loginHouseKeeper">Housekeeper Login</Link>
-              </li>
-              <li className="nav-item">
-                <Link className="nav-link text-white fs-5" to="/loginMaintenance">Maintenance Login</Link>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </nav>
+    <div className="d-flex">
+      {/* Sidebar */}
+      <SidebarLogin />
 
-      <div className="d-flex justify-content-center align-items-center vh-90">
-        <div className="container" style={{ width: "500px" }}>
-          <h2 className="text-center mb-4 mt-5">Iniciar sesión</h2>
+      {/* Contenido - Formulario en el centro */}
+      <div className="container d-flex flex-column align-items-center" style={{ maxWidth: "500px", marginTop: "50px" }}>
+        <h2 className="text-center mb-4">Login Housekeeper</h2>
+
+        <div className="w-100">
           <div className="mb-3">
             <label htmlFor="email" className="form-label">Email</label>
             <input
@@ -85,6 +55,7 @@ const LoginHouseKeeper = () => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="Ingrese su correo electrónico"
+              required
             />
           </div>
           <div className="mb-3">
@@ -96,19 +67,22 @@ const LoginHouseKeeper = () => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Ingrese su contraseña"
+              required
             />
           </div>
-          <button className="btn w-100" style={{ backgroundColor: "#ac85eb", borderColor: "#B7A7D1" }}onClick={handleLogin}>
-           Login
+          <button className="btn w-100 mb-4" style={{ backgroundColor: "#ac85eb", borderColor: "#B7A7D1" }} onClick={handleLogin}>
+            Iniciar sesión
           </button>
-          <div className="mt-3 text-center">
-            <button className="btn btn-link" onClick={() => navigate('/signupHouseKeeper')}>
-              ¿No tienes cuenta? Regístrate
-            </button>
-          </div>
         </div>
+
+        {/* Imagen debajo del botón */}
+        <img
+          src="https://res.cloudinary.com/dnftnyi5g/image/upload/v1742389854/DALL_E_2025-03-19_14.10.41_-_An_illustration_of_five_hotel_cleaning_staff_members_in_a_modern_hotel_environment_wearing_uniforms_in_shades_of_lilac_purple_and_navy_blue._Each_s_kznes4.webp"
+          alt="Personal de limpieza del hotel"
+          style={{ width: "100%", maxWidth: "800px", borderRadius: "10px" }}
+        />
       </div>
-    </>
+    </div>
   );
 };
 

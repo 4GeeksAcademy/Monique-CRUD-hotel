@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import { Link } from "react-router-dom"; // Importar Link
+import SidebarLogin from '../component/sidebarLogin';
 
 const LoginMaintenance = () => {
   const [email, setEmail] = useState('');
@@ -19,16 +18,14 @@ const LoginMaintenance = () => {
     try {
       const response = await fetch(`${backendUrl}api/loginMaintenance`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
       });
 
       if (response.ok) {
         const data = await response.json();
         localStorage.setItem('token', data.token);
-        navigate('/privateMaintenance'); // Redirige a la zona privada de mantenimiento
+        navigate('/privateMaintenance');
       } else {
         const errorData = await response.json();
         alert(`Error: ${errorData.error || 'Credenciales incorrectas. Intenta nuevamente.'}`);
@@ -40,36 +37,16 @@ const LoginMaintenance = () => {
   };
 
   return (
-     <>
-      {/* Navbar */}
-      <nav className="navbar navbar-expand-lg navbar-light" style={{ backgroundColor: "#9b5de5" }}>
-        <div className="container-fluid">
-          <Link className="navbar-brand text-white fs-2" to="/">APIHOTEL</Link>
-          <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span className="navbar-toggler-icon"></span>
-          </button>
-          <div className="collapse navbar-collapse" id="navbarNav">
-            <ul className="navbar-nav ms-auto">
-              <li className="nav-item">
-                <Link className="nav-link text-white fs-5" to="/">Home</Link>
-              </li>
-              <li className="nav-item">
-                <Link className="nav-link text-white fs-5" to="/authhotel">Hotel Login</Link>
-              </li>
-              <li className="nav-item">
-                <Link className="nav-link text-white fs-5" to="/loginHouseKeeper">Housekeeper Login</Link>
-              </li>
-              <li className="nav-item">
-                <Link className="nav-link text-white fs-5" to="/loginMaintenance">Maintenance Login</Link>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </nav>
-      <div className="d-flex justify-content-center align-items-center vh-90">
-        <div className="container" style={{ width: "500px" }}>
-          <h2 className="text-center mb-4 mt-5">Iniciar sesión</h2>
-          <div className="mb-3">
+    <div className="d-flex">
+      {/* Sidebar */}
+      <SidebarLogin />
+
+      {/* Contenido - Formulario en el centro */}
+      <div className="container d-flex flex-column align-items-center text-center" style={{ maxWidth: "500px", marginTop: "50px" }}>
+        <h2 className="text-center mb-4">Login Mantenimiento</h2>
+
+        <div className="w-100">
+          <div className="mb-3 text-start">
             <label htmlFor="email" className="form-label">Email</label>
             <input
               type="email"
@@ -80,7 +57,7 @@ const LoginMaintenance = () => {
               placeholder="Ingrese su correo electrónico"
             />
           </div>
-          <div className="mb-3">
+          <div className="mb-3 text-start">
             <label htmlFor="password" className="form-label">Contraseña</label>
             <input
               type="password"
@@ -91,13 +68,23 @@ const LoginMaintenance = () => {
               placeholder="Ingrese su contraseña"
             />
           </div>
-          <button className="btn w-100" style={{ backgroundColor: "#ac85eb", borderColor: "#B7A7D1" }}onClick={handleLogin}>
-           Login
+          <button className="btn w-100 mb-4" style={{ backgroundColor: "#ac85eb", borderColor: "#B7A7D1" }} onClick={handleLogin}>
+            Iniciar sesión
           </button>
         </div>
+
+        {/* Imagen completamente centrada debajo del botón */}
+        <div className="d-flex justify-content-center">
+          <img
+            src="https://res.cloudinary.com/dnftnyi5g/image/upload/v1742391521/DALL_E_2025-03-19_14.38.26_-_An_illustration_of_maintenance_staff_members_working_in_a_hotel_environment._One_technician_is_holding_a_toolbox_another_is_using_a_mobile_device_an_hwhqvh.webp"
+            alt="Personal de mantenimiento del hotel"
+            className="img-fluid"
+            style={{ maxWidth: "100%", borderRadius: "10px" }}
+          />
+        </div>
       </div>
-      </>
-      );
+    </div>
+  );
 };
 
-      export default LoginMaintenance;
+export default LoginMaintenance;

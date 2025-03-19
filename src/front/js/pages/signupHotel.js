@@ -45,6 +45,8 @@ const SignupHotel = () => {
   }
 
   return (
+    <>
+     
     <div>
       <h2>Registrar Hotel</h2>
       <form onSubmit={handleSubmit}>
@@ -53,10 +55,11 @@ const SignupHotel = () => {
           <input type="text" required />
         </div>
         <div>
-          <button type="submit">Registrar</button>
+          <button type="submit" style={{ width: "250px", backgroundColor: "#9b5de5", minHeight: "100vh" }}>Registrar</button>
         </div>
       </form>
     </div>
+    </>
   );
 };
 

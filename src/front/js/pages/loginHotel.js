@@ -2,7 +2,7 @@ import React, { useContext, useState } from "react";
 import { Context } from "../store/appContext";
 import { useNavigate } from "react-router-dom";
 import 'bootstrap/dist/css/bootstrap.min.css'; // Asegúrate de tener Bootstrap importado.
-import "../../styles/loginHotel.css";
+
 
 const LoginHotel = () => {
     const { store, actions } = useContext(Context);
@@ -26,10 +26,9 @@ const LoginHotel = () => {
     }
 
     return (
-        
-        <div className="d-flex justify-content-center align-items-center vh-90">
+            
             <div className="container" style={{ width: "500px" }}>
-                <h2 className="text-center mb-4">Iniciar sesión</h2>
+                <h2 className="text-center mb-4">Login Hotel</h2>
                 <div className="mb-3">
                     <form onSubmit={sendData}>
                         <div className="mb-3">
@@ -61,14 +60,13 @@ const LoginHotel = () => {
                             type="submit"
                             className="btn w-100"
                             style={{ backgroundColor: "#ac85eb", borderColor: "#B7A7D1" }}>
-                            Login
+                            Iniciar sesión
                         </button>
-
 
                     </form>
                 </div>
             </div>
-        </div>
+        
     );
 };
 

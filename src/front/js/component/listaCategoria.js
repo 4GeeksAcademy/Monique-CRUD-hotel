@@ -83,8 +83,7 @@ const ListaCategoria = () => {
     return (
 
         <div className="container">
-            <div className="d-flex justify-content-between mt-3">
-                
+            <div className="d-flex justify-content-center align-items-center mb-4">                
                 <Link to="/crearCategoria" className="btn" style={{ backgroundColor: "#ac85eb", borderColor: "#B7A7D1" }}>Crear Categoría</Link>
             </div>
             <h2 className="text-center my-3">Lista de Categorías</h2>
@@ -113,12 +112,7 @@ const ListaCategoria = () => {
                     ))}
                 </>
             )}
-            <div className="d-flex justify-content-center align-items-center mt-4">
-                <button className="btn" style={{ backgroundColor: "#ac85eb", borderColor: "#B7A7D1" }} onClick={() => navigate("/privateHotel")}>
-                    Volver
-                </button>
-            </div>
-        </div>
+         </div>
 
     );
 };

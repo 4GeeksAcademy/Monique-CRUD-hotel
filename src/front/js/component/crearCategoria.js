@@ -103,7 +103,7 @@ const CrearCategoria = () => {
                     </div>
                 </form>
                 <div className="d-flex justify-content-center align-items-center mt-4">
-                    <button className="btn" style={{ backgroundColor: "#ac85eb", borderColor: "#B7A7D1" }} onClick={() => navigate("/privateHotel")}>
+                    <button className="btn" style={{ backgroundColor: "#ac85eb", borderColor: "#B7A7D1" }} onClick={() => navigate("/listaCat")}>
                         Volver
                     </button>
                 </div>
